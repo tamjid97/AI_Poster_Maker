@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const poster_controller_1 = require("../controllers/poster.controller");
+const auth_1 = require("../middleware/auth");
+const router = (0, express_1.Router)();
+router.use(auth_1.requireAuth);
+router.post('/', poster_controller_1.createPoster);
+router.get('/', poster_controller_1.getPosters);
+router.get('/:id', poster_controller_1.getPosterById);
+router.delete('/:id', poster_controller_1.deletePoster);
+router.post('/:id/regenerate', poster_controller_1.regeneratePoster);
+exports.default = router;

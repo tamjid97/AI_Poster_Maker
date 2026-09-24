@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" width="1200" height="1600">
+  <defs>
+    <linearGradient id="bg-grad-campaign" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#005236" />
+      <stop offset="45%" stop-color="#006a4e" />
+      <stop offset="100%" stop-color="#002b1b" />
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1200" height="1600" fill="url(#bg-grad-campaign)" />
+  <rect x="15" y="15" width="1170" height="1570" fill="none" stroke="#ffd700" stroke-width="10" rx="10" />
+  <text x="600" y="400" text-anchor="middle" font-size="48" font-weight="800" fill="#ffffff" font-family="Arial">নির্বাচনী প্রচারণা</text>
+  <circle cx="600" cy="800" r="200" fill="#002b1b" stroke="#ffd700" stroke-width="10" />
+  <text x="600" y="805" text-anchor="middle" font-size="24" fill="#ffd700" font-family="Arial">Photo</text>
+  <text x="600" y="1200" text-anchor="middle" font-size="56" font-weight="800" fill="#ffffff" font-family="Arial">নাম</text>
+  <rect x="400" y="1250" width="400" height="8" fill="#f42a41" />
+  <text x="600" y="1350" text-anchor="middle" font-size="32" fill="#ffd700" font-family="Arial">পদবী</text>
+</svg>

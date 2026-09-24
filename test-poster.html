@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', 'Hind Siliguri', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(180deg, #005236 0%, #006a4e 45%, #002b1b 100%);
+      position: relative;
+      overflow: hidden;
+      border: 10px solid #ffd700;
+      box-sizing: border-box;
+    }
+    .leader-photos {
+      position: absolute;
+      top: 115px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+    }
+    .leader-photo {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: #002b1b;
+      overflow: hidden;
+      border: 4px solid #ffd700;
+    }
+    .leader-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .emblem-badge {
+      position: absolute;
+      top: 275px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.4);
+      border: 2px solid #ffd700;
+      border-radius: 25px;
+      padding: 10px 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .emblem-badge span {
+      font-size: 24px;
+      color: #ffd700;
+    }
+    .emblem-badge .text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .headline-banner {
+      position: absolute;
+      top: 350px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #dc2626;
+      border: 4px solid #ffd700;
+      border-radius: 20px;
+      padding: 20px 40px;
+      width: 1040px;
+    }
+    .headline {
+      font-size: 44px;
+      font-weight: 800;
+      color: #ffffff;
+      text-align: center;
+      line-height: 1.3;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 740px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 520px;
+      height: 520px;
+      border-radius: 50%;
+      background: #002b1b;
+      overflow: hidden;
+      border: 10px solid #ffd700;
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .name-section {
+      position: absolute;
+      top: 1060px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 900px;
+    }
+    .name {
+      font-size: 62px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+    .name-underline {
+      width: 600px;
+      height: 10px;
+      background: #f42a41;
+      border-radius: 5px;
+      margin: 0 auto 20px;
+    }
+    .designation {
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffd700;
+      margin-bottom: 15px;
+    }
+    .party {
+      font-size: 32px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 15px;
+    }
+    .location {
+      font-size: 26px;
+      font-weight: 500;
+      color: #a7f3d0;
+    }
+    .corner-accent {
+      position: absolute;
+      bottom: 20px;
+      width: 100px;
+      height: 80px;
+      background: #f42a41;
+    }
+    .corner-accent.left {
+      left: 20px;
+      clip-path: polygon(0 100%, 0 0, 100% 100%);
+    }
+    .corner-accent.right {
+      right: 20px;
+      clip-path: polygon(100% 100%, 100% 0, 0 100%);
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="leader-photos">
+      <div class="leader-photo">
+        <img src="https://via.placeholder.com/130x130?text=Leader" alt="Leader">
+      </div>
+      <div class="leader-photo">
+        <img src="https://via.placeholder.com/130x130?text=Leader" alt="Leader">
+      </div>
+      <div class="leader-photo">
+        <img src="https://via.placeholder.com/130x130?text=Leader" alt="Leader">
+      </div>
+    </div>
+    
+    <div class="emblem-badge">
+      <span>★</span>
+      <span class="text">নির্বাচনী প্রচারণা</span>
+      <span>★</span>
+    </div>
+    
+    <div class="headline-banner">
+      <div class="headline">TEMPLATE_TEST_98765 - আসন্ন নির্বাচনে সকলের সমর্থন কামনা</div>
+    </div>
+    
+    <div class="hero-photo">
+      <img src="https://via.placeholder.com/520x520?text=MAIN+PHOTO" alt="Main Photo">
+    </div>
+    
+    <div class="name-section">
+      <div class="name">TEMPLATE_TEST_98765</div>
+      <div class="name-underline"></div>
+      <div class="designation">TEST DESIGNATION</div>
+      <div class="party">TEST ORGANIZATION</div>
+      <div class="location">TEST LOCATION</div>
+    </div>
+    
+    <div class="corner-accent left"></div>
+    <div class="corner-accent right"></div>
+  </div>
+</body>
+</html>
