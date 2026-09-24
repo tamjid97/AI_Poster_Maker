@@ -118,12 +118,16 @@ export default function TemplatesPage() {
                           src={template.thumbnail_url}
                           alt={template.title}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            console.error('Failed to load thumbnail:', template.thumbnail_url);
+                            (e.target as HTMLImageElement).style.display = 'none';
+                            (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                          }}
                         />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-primary">
-                          <LayoutIcon className="h-16 w-16 text-white/50" />
-                        </div>
-                      )}
+                      ) : null}
+                      <div className={`flex h-full w-full items-center justify-center bg-gradient-primary ${template.thumbnail_url ? 'hidden' : ''}`}>
+                        <LayoutIcon className="h-16 w-16 text-white/50" />
+                      </div>
                     </div>
                     <CardContent className="p-5">
                       <div className="mb-3 flex items-center justify-between">

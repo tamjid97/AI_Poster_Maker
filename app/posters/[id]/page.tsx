@@ -78,81 +78,77 @@ function PosterPreviewContent() {
       const p = result.data.poster;
       setPoster(p);
 
-      try {
-        const templatesRes = await fetch('/api/templates').catch(() => null);
-        const templatesData = templatesRes ? await templatesRes.json() : null;
-        const templates: Template[] = templatesData?.data?.templates || DEFAULT_TEMPLATES;
+      // Try to get HTML from creation response first (stored in poster or localStorage)
+      let htmlToUse = '';
 
-        // === CRITICAL DEBUG LOGGING START ===
-        console.log('========================================');
-        console.log('[CRITICAL DEBUG] POSTER PREVIEW - template resolution');
-        console.log('[CRITICAL DEBUG] poster.id:', p.id);
-        console.log('[CRITICAL DEBUG] poster.template_id:', p.template_id);
-        console.log('[CRITICAL DEBUG] poster.occasion:', p.occasion);
-        console.log('[CRITICAL DEBUG] poster.layout_suggestion:', JSON.stringify(p.layout_suggestion));
-        console.log('[CRITICAL DEBUG] layout_suggestion.templateId:', (p.layout_suggestion as any)?.templateId);
-        console.log('[CRITICAL DEBUG] templates returned from API:', templates.map(t => ({ id: t.id, title: t.title, thumbnail_url: t.thumbnail_url })));
-        console.log('========================================');
-        // === CRITICAL DEBUG LOGGING END ===
+      // Check if HTML was passed in the data (from creation response)
+      if (result.data.html) {
+        htmlToUse = result.data.html;
+        console.log('[POSTER PREVIEW] Using HTML from creation response');
+      } else {
+        // Fallback: regenerate HTML
+        try {
+          const templatesRes = await fetch('/api/templates').catch(() => null);
+          const templatesData = templatesRes ? await templatesRes.json() : null;
+          const templates: Template[] = templatesData?.data?.templates || DEFAULT_TEMPLATES;
 
-        // Priority 1: Use template_id stored on poster (now includes 'tpl-*' IDs)
-        const storedTemplateId = p.template_id;
-        // Priority 2: Fall back to templateId embedded in layout_suggestion
-        const layoutTemplateId = (p.layout_suggestion as any)?.templateId;
-        // Priority 3: The final target ID to look up
-        const targetTemplateId = storedTemplateId || layoutTemplateId;
+          console.log('========================================');
+          console.log('[CRITICAL DEBUG] POSTER PREVIEW - template resolution');
+          console.log('[CRITICAL DEBUG] poster.id:', p.id);
+          console.log('[CRITICAL DEBUG] poster.template_id:', p.template_id);
+          console.log('[CRITICAL DEBUG] poster.occasion:', p.occasion);
+          console.log('[CRITICAL DEBUG] poster.layout_suggestion:', JSON.stringify(p.layout_suggestion));
+          console.log('[CRITICAL DEBUG] layout_suggestion.templateId:', (p.layout_suggestion as any)?.templateId);
+          console.log('[CRITICAL DEBUG] templates returned from API:', templates.map(t => ({ id: t.id, title: t.title, thumbnail_url: t.thumbnail_url })));
+          console.log('========================================');
 
-        let template: Template | undefined;
+          const storedTemplateId = p.template_id;
+          const layoutTemplateId = (p.layout_suggestion as any)?.templateId;
+          const targetTemplateId = storedTemplateId || layoutTemplateId;
 
-        if (targetTemplateId) {
-          // Exact match first
-          template = templates.find((t) => t.id === targetTemplateId);
-          // Then try partial match (e.g., 'political-campaign' matches 'tpl-political-campaign')
-          if (!template) {
-            template = templates.find(
-              (t) =>
-                t.id.includes(targetTemplateId) ||
-                targetTemplateId.includes(t.id)
-            );
+          let template: Template | undefined;
+
+          if (targetTemplateId) {
+            template = templates.find((t) => t.id === targetTemplateId);
+            if (!template) {
+              template = templates.find(
+                (t) =>
+                  t.id.includes(targetTemplateId) ||
+                  targetTemplateId.includes(t.id)
+              );
+            }
           }
+
+          if (!template) {
+            console.error('[CRITICAL DEBUG] TEMPLATE NOT FOUND IN PREVIEW - showing error');
+            setHtml(`<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#ff4d4d;font-family:sans-serif;text-align:center;padding:40px;">
+              <div style="border:3px solid #ff4d4d;padding:30px;border-radius:12px;background:#1a0000;max-width:600px;">
+                <h2 style="font-size:28px;margin-bottom:20px;">Template Not Found</h2>
+                <p style="font-size:14px;color:#fff;word-break:break-all;">Selected template "${targetTemplateId}" could not be resolved. Available templates: ${templates.map(t => t.id).join(', ')}</p>
+              </div>
+            </div>`);
+            setLoading(false);
+            return;
+          }
+
+          console.log('[CRITICAL DEBUG] RESOLVED template id:', template?.id);
+          console.log('[CRITICAL DEBUG] RESOLVED template title:', template?.title);
+
+          const posterWithTemplateId = {
+            ...p,
+            template_id: targetTemplateId || (template?.id ?? null),
+          };
+
+          htmlToUse = generatePosterHTML(posterWithTemplateId, p.layout_suggestion || undefined, template);
+          console.log('[POSTER PREVIEW] Regenerated HTML');
+        } catch (err) {
+          console.error('Failed to render poster HTML:', err);
+          const fallbackHtml = generatePosterHTML(p, p.layout_suggestion || undefined);
+          htmlToUse = fallbackHtml;
         }
-
-        // DISABLED FALLBACKS: If template not found, show error instead of falling back
-        if (!template) {
-          console.error('[CRITICAL DEBUG] TEMPLATE NOT FOUND IN PREVIEW - showing error');
-          setHtml(`<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#ff4d4d;font-family:sans-serif;text-align:center;padding:40px;">
-            <div style="border:3px solid #ff4d4d;padding:30px;border-radius:12px;background:#1a0000;max-width:600px;">
-              <h2 style="font-size:28px;margin-bottom:20px;">Template Not Found</h2>
-              <p style="font-size:14px;color:#fff;word-break:break-all;">Selected template "${targetTemplateId}" could not be resolved. Available templates: ${templates.map(t => t.id).join(', ')}</p>
-            </div>
-          </div>`);
-          setLoading(false);
-          return;
-        }
-
-        // === CRITICAL DEBUG LOGGING: which template was resolved ===
-        console.log('[CRITICAL DEBUG] storedTemplateId:', storedTemplateId);
-        console.log('[CRITICAL DEBUG] layoutTemplateId:', layoutTemplateId);
-        console.log('[CRITICAL DEBUG] targetTemplateId:', targetTemplateId);
-        console.log('[CRITICAL DEBUG] RESOLVED template id:', template?.id);
-        console.log('[CRITICAL DEBUG] RESOLVED template title:', template?.title);
-        console.log('[CRITICAL DEBUG] RESOLVED template thumbnail_url:', template?.thumbnail_url);
-        console.log('========================================');
-        // === CRITICAL DEBUG LOGGING END ===
-
-        // Ensure template_id on poster record matches resolved template for rendering
-        const posterWithTemplateId = {
-          ...p,
-          template_id: targetTemplateId || (template?.id ?? null),
-        };
-
-        const finalHtml = generatePosterHTML(posterWithTemplateId, p.layout_suggestion || undefined, template);
-        setHtml(finalHtml);
-      } catch (err) {
-        console.error('Failed to render poster HTML:', err);
-        const fallbackHtml = generatePosterHTML(p, p.layout_suggestion || undefined);
-        setHtml(fallbackHtml);
       }
+
+      setHtml(htmlToUse);
     } else {
       toast.error(result.message || 'Failed to load poster');
     }

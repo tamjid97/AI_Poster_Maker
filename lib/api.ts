@@ -60,7 +60,7 @@ export async function fetchPosters(page: number = 1, limit: number = 10) {
 }
 
 export async function fetchPoster(id: string) {
-  return apiCall<{ poster: Poster }>(`/api/posters/${id}`);
+  return apiCall<{ poster: Poster; html?: string; layout?: LayoutSuggestion }>(`/api/posters/${id}`);
 }
 
 export async function deletePoster(id: string) {

@@ -1,7 +1,240 @@
-import type { LayoutSuggestion, Poster, Template } from '@/types';
-import { DEFAULT_TEMPLATES } from '@/lib/default-templates';
+import type { Poster, LayoutSuggestion, Template } from '@/types';
 
-function escapeHtml(text?: string | null): string {
+// Hardcoded templates - same as in templates API
+const HARDCODED_TEMPLATES: Template[] = [
+  {
+    id: 'tpl-election-campaign',
+    title: 'নির্বাচনী প্রচারণা — Election Campaign Premium Poster (SVG)',
+    occasion_type: 'political_campaign',
+    thumbnail_url: '/templates/election-campaign.svg',
+    layout_config: {
+      background: {
+        gradient: ['#071F18', '#0B3024', '#260F16'],
+        texture: 'geometric-pattern',
+        decorations: ['flag-motif', 'geometric-pattern', 'gold-lines', 'photo-rings']
+      },
+      photoSlots: [
+        { shape: 'circle', position: { x: '50%', y: '40.6%' }, size: '47.5%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '14.6%', y: '79.7%' }, size: '17.5%', border: 'gold', glow: false }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Hind Siliguri', size: 72, color: '#FFF4B5', effect: 'glow', position: { x: '50%', y: '18.6%' } },
+        { field: 'name', font: 'Hind Siliguri', size: 76, color: '#FFFFFF', effect: 'glow', position: { x: '50%', y: '63.6%' } },
+        { field: 'designation', font: 'Hind Siliguri', size: 40, color: '#F5D878', effect: 'glow', position: { x: '50%', y: '69.7%' } },
+        { field: 'district', font: 'Hind Siliguri', size: 36, color: '#FFFFFF', effect: 'none', position: { x: '50%', y: '78%' } }
+      ],
+      namePlate: {
+        style: 'ribbon',
+        gradient: ['#063B2A', '#0B5A3E', '#063B2A'],
+        textColor: '#FFFFFF'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'প্রচারে: ______'
+      },
+      colorScheme: {
+        primary: '#006A4E',
+        secondary: '#F42A41',
+        accent: '#DDB84A'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tpl-condolence',
+    title: 'শোক ও শ্রদ্ধাঞ্জলি — Condolence Premium Poster',
+    occasion_type: 'condolence',
+    thumbnail_url: '/templates/condolence.svg',
+    layout_config: {
+      background: {
+        gradient: ['#1a2f4a', '#1e3a5f', '#162e4a', '#0f1724'],
+        texture: 'rays',
+        decorations: ['memorial-border', 'candle', 'dove', 'prayer', 'floral-corner']
+      },
+      photoSlots: [
+        { shape: 'circle', position: { x: '50%', y: '61%' }, size: '40%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '35%', y: '11%' }, size: '9.5%', border: 'gold', glow: false },
+        { shape: 'circle', position: { x: '65%', y: '11%' }, size: '9.5%', border: 'gold', glow: false }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Noto Sans Bengali', size: 50, color: '#d4af37', effect: 'glow', position: { x: '50%', y: '22%' } }
+      ],
+      namePlate: {
+        style: 'bar',
+        gradient: ['rgba(212, 175, 55, 0.35)', 'rgba(212, 175, 55, 0.55)', 'rgba(212, 175, 55, 0.35)'],
+        textColor: '#ffffff'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'স্মরণে: ______'
+      },
+      colorScheme: {
+        primary: '#1e3a5f',
+        secondary: '#f4e4bc',
+        accent: '#d4af37'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tpl-eid-greeting',
+    title: 'পবিত্র ঈদ মোবারক / রমজান — Eid/Ramadan Premium Poster',
+    occasion_type: 'eid_greeting',
+    thumbnail_url: '/templates/eid-ramadan.svg',
+    layout_config: {
+      background: {
+        gradient: ['#022c22', '#064e3b', '#047857', '#011a17'],
+        texture: 'pattern',
+        decorations: ['crescent-moon', 'star', 'mosque-silhouette', 'islamic-pattern-border', 'lantern']
+      },
+      photoSlots: [
+        { shape: 'circle', position: { x: '50%', y: '64%' }, size: '40%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '35%', y: '12%' }, size: '9.5%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '65%', y: '12%' }, size: '9.5%', border: 'gold', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Noto Sans Bengali', size: 50, color: '#ffd700', effect: 'glow', position: { x: '50%', y: '31%' } }
+      ],
+      namePlate: {
+        style: 'bar',
+        gradient: ['#7f1d1d', '#991b1b', '#7f1d1d'],
+        textColor: '#ffffff'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'শুভেচ্ছা: ______'
+      },
+      colorScheme: {
+        primary: '#047857',
+        secondary: '#7f1d1d',
+        accent: '#ffd700'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tpl-greeting',
+    title: 'শুভেচ্ছা / উৎসব — Greeting Premium Poster',
+    occasion_type: 'greeting',
+    thumbnail_url: '/templates/greeting.svg',
+    layout_config: {
+      background: {
+        gradient: ['#6d28d9', '#7c3aed', '#8b5cf6', '#4c1d95'],
+        texture: 'confetti',
+        decorations: ['balloon', 'confetti-corner', 'party-icon', 'sparkle']
+      },
+      photoSlots: [
+        { shape: 'circle', position: { x: '50%', y: '63%' }, size: '40%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '35%', y: '12%' }, size: '9.5%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '65%', y: '12%' }, size: '9.5%', border: 'gold', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Noto Sans Bengali', size: 52, color: '#ffffff', effect: 'glow', position: { x: '50%', y: '23%' } }
+      ],
+      namePlate: {
+        style: 'bar',
+        gradient: ['#ec4899', '#f472b6', '#ec4899'],
+        textColor: '#ffffff'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'শুভেচ্ছা: ______'
+      },
+      colorScheme: {
+        primary: '#7c3aed',
+        secondary: '#ec4899',
+        accent: '#fbbf24'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tpl-victory-day',
+    title: 'মহান বিজয় দিবস — Victory Day Premium Poster',
+    occasion_type: 'victory_day',
+    thumbnail_url: '/templates/victory-day.svg',
+    layout_config: {
+      background: {
+        gradient: ['#003d2d', '#006a4e', '#004d3a', '#002b1b'],
+        texture: 'rays',
+        decorations: ['floral-corner', 'flag-stripe', 'rice-paddy', 'dove', 'sparkle']
+      },
+      photoSlots: [
+        { shape: 'circle', position: { x: '50%', y: '62%' }, size: '42%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '28%', y: '11%' }, size: '9%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '50%', y: '11%' }, size: '9%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '72%', y: '11%' }, size: '9%', border: 'gold', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Noto Sans Bengali', size: 54, color: '#ffffff', effect: 'glow', position: { x: '50%', y: '21%' } }
+      ],
+      namePlate: {
+        style: 'ribbon',
+        gradient: ['#ffd700', '#ffed4e', '#ffd700'],
+        textColor: '#006a4e'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'প্রচারে: ______'
+      },
+      colorScheme: {
+        primary: '#006a4e',
+        secondary: '#f42a41',
+        accent: '#ffd700'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tpl-eid-mubarak',
+    title: 'ঈদ মোবারক — Eid Mubarak Premium Poster',
+    occasion_type: 'eid_mubarak',
+    thumbnail_url: '/templates/eid-mubarak.svg',
+    layout_config: {
+      background: {
+        gradient: ['#FFFDF5', '#FFF9E9', '#F7EFD7'],
+        texture: 'subtle-pattern',
+        decorations: ['gold-ray', 'mosque-decoration', 'dome', 'minaret']
+      },
+      photoSlots: [
+        { shape: 'organic', position: { x: '67%', y: '47%' }, size: '48%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '9%', y: '9%' }, size: '9%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '19%', y: '9%' }, size: '9%', border: 'gold', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Hind Siliguri', size: 78, color: '#07583F', effect: 'none', position: { x: '10%', y: '40%' } },
+        { field: 'name', font: 'Hind Siliguri', size: 68, color: '#07583F', effect: 'none', position: { x: '8%', y: '83%' } },
+        { field: 'designation', font: 'Hind Siliguri', size: 45, color: '#FFFFFF', effect: 'none', position: { x: '50%', y: '96%' } }
+      ],
+      namePlate: {
+        style: 'banner',
+        gradient: ['#07563E', '#063E2F', '#042C22'],
+        textColor: '#FFFFFF'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'ঈদ মোবারক'
+      },
+      colorScheme: {
+        primary: '#08734F',
+        secondary: '#F0A52B',
+        accent: '#C99930'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+];
+
+/**
+ * Escape HTML to prevent XSS and properly render text
+ */
+function escapeHtml(text: string | undefined | null): string {
   if (!text) return '';
   return String(text)
     .replace(/&/g, '&amp;')
@@ -11,824 +244,8 @@ function escapeHtml(text?: string | null): string {
     .replace(/'/g, '&#039;');
 }
 
-// Template 1: Eid Greeting - Dark maroon/red background, circular photo cutouts, crescent-moon graphic, large Bangla headline
-function generateEidGreetingTemplate(poster: Poster): string {
-  const photos = poster.photo_urls || [];
-  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
-  const insetPhoto1 = photos[1] || 'https://via.placeholder.com/130x130?text=Leader';
-  const insetPhoto2 = photos[2] || 'https://via.placeholder.com/130x130?text=Leader';
-
-  return `
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="utf-8">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', 'Hind Siliguri', sans-serif; overflow: hidden; }
-    .poster {
-      width: 1200px;
-      height: 1600px;
-      background: linear-gradient(135deg, #3f0910 0%, #7f1d1d 45%, #1a0306 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .flag-stripe {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 140px;
-      height: 500px;
-      background: #006a4e;
-      clip-path: polygon(0 0, 100% 0, 36% 100%, 0 100%);
-    }
-    .flag-circle {
-      position: absolute;
-      left: 35px;
-      top: 185px;
-      width: 70px;
-      height: 70px;
-      background: #f42a41;
-      border-radius: 50%;
-    }
-    .moon-star {
-      position: absolute;
-      right: 70px;
-      top: 40px;
-      width: 120px;
-      height: 120px;
-      background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
-      border-radius: 50%;
-    }
-    .moon-star::after {
-      content: '★';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px;
-      color: #ffd700;
-    }
-    .inset-photos {
-      position: absolute;
-      left: 140px;
-      top: 60px;
-      display: flex;
-      gap: 10px;
-    }
-    .inset-photo {
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: #240409;
-      overflow: hidden;
-      border: 5px solid #ffd700;
-    }
-    .inset-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .occasion-badge {
-      position: absolute;
-      left: 360px;
-      top: 240px;
-      background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
-      border: 3px solid #ffe259;
-      border-radius: 35px;
-      padding: 10px 40px;
-      font-size: 38px;
-      font-weight: 800;
-      color: #3f0910;
-      text-align: center;
-    }
-    .headline {
-      position: absolute;
-      left: 50%;
-      top: 380px;
-      transform: translateX(-50%);
-      font-size: 52px;
-      font-weight: 800;
-      color: #ffd700;
-      text-align: center;
-      width: 1000px;
-      line-height: 1.3;
-    }
-    .hero-photo {
-      position: absolute;
-      left: 50%;
-      top: 730px;
-      transform: translateX(-50%);
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: #1a0306;
-      overflow: hidden;
-      border: 10px solid #ffd700;
-    }
-    .hero-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .greeting-text {
-      position: absolute;
-      left: 50%;
-      top: 1050px;
-      transform: translateX(-50%);
-      font-size: 30px;
-      font-weight: 600;
-      color: #fef08a;
-      text-align: center;
-      width: 900px;
-    }
-    .name-banner {
-      position: absolute;
-      left: 150px;
-      top: 1130px;
-      background: #991b1b;
-      border: 4px solid #ffd700;
-      border-radius: 24px;
-      padding: 15px 30px;
-      width: 900px;
-    }
-    .name {
-      font-size: 58px;
-      font-weight: 800;
-      color: #ffffff;
-      text-align: center;
-    }
-    .designation {
-      position: absolute;
-      left: 50%;
-      top: 1380px;
-      transform: translateX(-50%);
-      font-size: 34px;
-      font-weight: 700;
-      color: #ffd700;
-      text-align: center;
-      width: 900px;
-    }
-    .organization {
-      position: absolute;
-      left: 50%;
-      top: 1440px;
-      transform: translateX(-50%);
-      font-size: 30px;
-      font-weight: 600;
-      color: #ffffff;
-      text-align: center;
-      width: 900px;
-    }
-    .location {
-      position: absolute;
-      left: 50%;
-      top: 1500px;
-      transform: translateX(-50%);
-      font-size: 26px;
-      font-weight: 500;
-      color: #fca5a5;
-      text-align: center;
-      width: 900px;
-    }
-  </style>
-</head>
-<body>
-  <div class="poster">
-    <div class="flag-stripe"></div>
-    <div class="flag-circle"></div>
-    <div class="moon-star"></div>
-    
-    <div class="inset-photos">
-      <div class="inset-photo">
-        <img src="${escapeHtml(insetPhoto1)}" alt="Leader">
-      </div>
-      <div class="inset-photo">
-        <img src="${escapeHtml(insetPhoto2)}" alt="Leader">
-      </div>
-    </div>
-    
-    <div class="occasion-badge">পবিত্র ঈদ মোবারক</div>
-    <div class="headline">${escapeHtml(poster.headline)}</div>
-    
-    <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
-    </div>
-    
-    <div class="greeting-text">${escapeHtml(poster.headline)}</div>
-    
-    <div class="name-banner">
-      <div class="name">${escapeHtml(poster.name)}</div>
-    </div>
-    
-    <div class="designation">${escapeHtml(poster.designation || '')}</div>
-    <div class="organization">${escapeHtml([poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
-    <div class="location">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</div>
-  </div>
-</body>
-</html>`;
-}
-
-// Template 2: Political Campaign - Green background, circular headshots, party logo, red banner headline
-function generatePoliticalCampaignTemplate(poster: Poster): string {
-  const photos = poster.photo_urls || [];
-  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
-  const leaderPhoto1 = photos[1] || 'https://via.placeholder.com/120x120?text=Leader';
-  const leaderPhoto2 = photos[2] || 'https://via.placeholder.com/120x120?text=Leader';
-  const leaderPhoto3 = photos[3] || 'https://via.placeholder.com/120x120?text=Leader';
-
-  return `
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="utf-8">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', 'Hind Siliguri', sans-serif; overflow: hidden; }
-    .poster {
-      width: 1200px;
-      height: 1600px;
-      background: linear-gradient(180deg, #005236 0%, #006a4e 45%, #002b1b 100%);
-      position: relative;
-      overflow: hidden;
-      border: 10px solid #ffd700;
-      box-sizing: border-box;
-    }
-    .leader-photos {
-      position: absolute;
-      top: 115px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 20px;
-    }
-    .leader-photo {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      background: #002b1b;
-      overflow: hidden;
-      border: 4px solid #ffd700;
-    }
-    .leader-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .emblem-badge {
-      position: absolute;
-      top: 275px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.4);
-      border: 2px solid #ffd700;
-      border-radius: 25px;
-      padding: 10px 30px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .emblem-badge span {
-      font-size: 24px;
-      color: #ffd700;
-    }
-    .emblem-badge .text {
-      font-size: 22px;
-      font-weight: 700;
-      color: #ffffff;
-    }
-    .headline-banner {
-      position: absolute;
-      top: 350px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #dc2626;
-      border: 4px solid #ffd700;
-      border-radius: 20px;
-      padding: 20px 40px;
-      width: 1040px;
-    }
-    .headline {
-      font-size: 44px;
-      font-weight: 800;
-      color: #ffffff;
-      text-align: center;
-      line-height: 1.3;
-    }
-    .hero-photo {
-      position: absolute;
-      top: 740px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 520px;
-      height: 520px;
-      border-radius: 50%;
-      background: #002b1b;
-      overflow: hidden;
-      border: 10px solid #ffd700;
-    }
-    .hero-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .name-section {
-      position: absolute;
-      top: 1060px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      width: 900px;
-    }
-    .name {
-      font-size: 62px;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 10px;
-    }
-    .name-underline {
-      width: 600px;
-      height: 10px;
-      background: #f42a41;
-      border-radius: 5px;
-      margin: 0 auto 20px;
-    }
-    .designation {
-      font-size: 36px;
-      font-weight: 700;
-      color: #ffd700;
-      margin-bottom: 15px;
-    }
-    .party {
-      font-size: 32px;
-      font-weight: 600;
-      color: #ffffff;
-      margin-bottom: 15px;
-    }
-    .location {
-      font-size: 26px;
-      font-weight: 500;
-      color: #a7f3d0;
-    }
-    .corner-accent {
-      position: absolute;
-      bottom: 20px;
-      width: 100px;
-      height: 80px;
-      background: #f42a41;
-    }
-    .corner-accent.left {
-      left: 20px;
-      clip-path: polygon(0 100%, 0 0, 100% 100%);
-    }
-    .corner-accent.right {
-      right: 20px;
-      clip-path: polygon(100% 100%, 100% 0, 0 100%);
-    }
-  </style>
-</head>
-<body>
-  <div class="poster">
-    <div class="leader-photos">
-      <div class="leader-photo">
-        <img src="${escapeHtml(leaderPhoto1)}" alt="Leader">
-      </div>
-      <div class="leader-photo">
-        <img src="${escapeHtml(leaderPhoto2)}" alt="Leader">
-      </div>
-      <div class="leader-photo">
-        <img src="${escapeHtml(leaderPhoto3)}" alt="Leader">
-      </div>
-    </div>
-    
-    <div class="emblem-badge">
-      <span>★</span>
-      <span class="text">${escapeHtml(poster.occasion)}</span>
-      <span>★</span>
-    </div>
-    
-    <div class="headline-banner">
-      <div class="headline">${escapeHtml(poster.headline)}</div>
-    </div>
-    
-    <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
-    </div>
-    
-    <div class="name-section">
-      <div class="name">${escapeHtml(poster.name)}</div>
-      <div class="name-underline"></div>
-      <div class="designation">${escapeHtml(poster.designation || '')}</div>
-      <div class="party">${escapeHtml([poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
-      <div class="location">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</div>
-    </div>
-    
-    <div class="corner-accent left"></div>
-    <div class="corner-accent right"></div>
-  </div>
-</body>
-</html>`;
-}
-
-// Template 3: Condolence - Soft yellow/cream background, green swoosh, circular photos
-function generateCondolenceTemplate(poster: Poster): string {
-  const photos = poster.photo_urls || [];
-  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
-  const insetPhoto = photos[1] || 'https://via.placeholder.com/140x140?text=Leader';
-
-  return `
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="utf-8">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', 'Hind Siliguri', sans-serif; overflow: hidden; }
-    .poster {
-      width: 1200px;
-      height: 1600px;
-      background: linear-gradient(180deg, #fffbeb 0%, #fef08a 40%, #fef3c7 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .green-swoosh {
-      position: absolute;
-      top: -100px;
-      right: 100px;
-      width: 900px;
-      height: 1000px;
-      background: #064e3b;
-      opacity: 0.9;
-      border-radius: 50%;
-      transform: rotate(-15deg);
-    }
-    .inset-photo {
-      position: absolute;
-      top: 50px;
-      left: 50px;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;
-      background: #ffffff;
-      overflow: hidden;
-      border: 5px solid #064e3b;
-    }
-    .inset-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .respect-badge {
-      position: absolute;
-      top: 50px;
-      right: 50px;
-      width: 140px;
-      height: 140px;
-      background: #064e3b;
-      border: 4px solid #fef08a;
-      border-radius: 50%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    .respect-badge .top {
-      font-size: 22px;
-      color: #ffffff;
-    }
-    .respect-badge .bottom {
-      font-size: 32px;
-      font-weight: 700;
-      color: #fef08a;
-    }
-    .headline-banner {
-      position: absolute;
-      top: 240px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #064e3b;
-      opacity: 0.95;
-      border-radius: 20px;
-      padding: 20px 40px;
-      width: 1000px;
-    }
-    .headline {
-      font-size: 50px;
-      font-weight: 800;
-      color: #ffffff;
-      text-align: center;
-    }
-    .hero-photo {
-      position: absolute;
-      top: 710px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 500px;
-      height: 500px;
-      border-radius: 50%;
-      background: #ffffff;
-      overflow: hidden;
-      border: 10px solid #064e3b;
-    }
-    .hero-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .name-banner {
-      position: absolute;
-      top: 1050px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #064e3b;
-      border: 4px solid #fef08a;
-      border-radius: 24px;
-      padding: 15px 30px;
-      width: 900px;
-    }
-    .name {
-      font-size: 58px;
-      font-weight: 800;
-      color: #ffffff;
-      text-align: center;
-    }
-    .designation {
-      position: absolute;
-      top: 1180px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 36px;
-      font-weight: 700;
-      color: #064e3b;
-      text-align: center;
-      width: 900px;
-    }
-    .organization {
-      position: absolute;
-      top: 1240px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 30px;
-      font-weight: 600;
-      color: #1e293b;
-      text-align: center;
-      width: 900px;
-    }
-    .location {
-      position: absolute;
-      top: 1300px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 26px;
-      font-weight: 500;
-      color: #475569;
-      text-align: center;
-      width: 900px;
-    }
-  </style>
-</head>
-<body>
-  <div class="poster">
-    <div class="green-swoosh"></div>
-    
-    <div class="inset-photo">
-      <img src="${escapeHtml(insetPhoto)}" alt="Leader">
-    </div>
-    
-    <div class="respect-badge">
-      <span class="top">বিনম্র</span>
-      <span class="bottom">শ্রদ্ধা</span>
-    </div>
-    
-    <div class="headline-banner">
-      <div class="headline">${escapeHtml(poster.headline)}</div>
-    </div>
-    
-    <div class="headline-banner">
-      <div class="headline">${escapeHtml(poster.headline)}</div>
-    </div>
-    
-    <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
-    </div>
-    
-    <div class="name-banner">
-      <div class="name">${escapeHtml(poster.name)}</div>
-    </div>
-    
-    <div class="designation">${escapeHtml(poster.designation || '')}</div>
-    <div class="organization">${escapeHtml([poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
-    <div class="location">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</div>
-  </div>
-</body>
-</html>`;
-}
-
-// Template 4: Tribute - Dark background, flag brush strokes, dramatic photo
-function generateTributeTemplate(poster: Poster): string {
-  const photos = poster.photo_urls || [];
-  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
-  const insetPhoto1 = photos[1] || 'https://via.placeholder.com/100x100?text=Support';
-  const insetPhoto2 = photos[2] || 'https://via.placeholder.com/100x100?text=Support';
-  const insetPhoto3 = photos[3] || 'https://via.placeholder.com/100x100?text=Support';
-
-  return `
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-  <meta charset="utf-8">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', 'Hind Siliguri', sans-serif; overflow: hidden; }
-    .poster {
-      width: 1200px;
-      height: 1600px;
-      background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #090d16 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .flag-red {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 120px;
-      background: #b91c1c;
-      opacity: 0.8;
-      clip-path: polygon(0 0, 100% 0, 100% 50%, 0 100%);
-    }
-    .flag-green {
-      position: absolute;
-      top: 60px;
-      left: 0;
-      width: 100%;
-      height: 160px;
-      background: #047857;
-      opacity: 0.9;
-      clip-path: polygon(0 0, 100% 38%, 100% 100%, 0 100%);
-    }
-    .inset-photos {
-      position: absolute;
-      top: 260px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 15px;
-    }
-    .inset-photo {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: #0f172a;
-      overflow: hidden;
-      border: 3px solid #f59e0b;
-    }
-    .inset-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .headline-section {
-      position: absolute;
-      top: 400px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .checkmark {
-      width: 70px;
-      height: 70px;
-      background: #f59e0b;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 40px;
-      font-weight: 800;
-      color: #ffffff;
-    }
-    .headline {
-      font-size: 48px;
-      font-weight: 800;
-      color: #ffffff;
-      width: 900px;
-    }
-    .hero-photo {
-      position: absolute;
-      top: 720px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 520px;
-      height: 520px;
-      border-radius: 50%;
-      background: #0f172a;
-      overflow: hidden;
-      border: 10px solid #f59e0b;
-    }
-    .hero-photo img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .name-banner {
-      position: absolute;
-      top: 1070px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #b91c1c;
-      border: 4px solid #f59e0b;
-      border-radius: 24px;
-      padding: 15px 30px;
-      width: 900px;
-    }
-    .name {
-      font-size: 58px;
-      font-weight: 800;
-      color: #ffffff;
-      text-align: center;
-    }
-    .designation {
-      position: absolute;
-      top: 1180px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 34px;
-      font-weight: 700;
-      color: #f59e0b;
-      text-align: center;
-      width: 900px;
-    }
-    .organization {
-      position: absolute;
-      top: 1240px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 30px;
-      font-weight: 600;
-      color: #ffffff;
-      text-align: center;
-      width: 900px;
-    }
-    .location {
-      position: absolute;
-      top: 1300px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 26px;
-      font-weight: 500;
-      color: #94a3b8;
-      text-align: center;
-      width: 900px;
-    }
-  </style>
-</head>
-<body>
-  <div class="poster">
-    <div class="flag-red"></div>
-    <div class="flag-green"></div>
-    
-    <div class="inset-photos">
-      <div class="inset-photo">
-        <img src="${escapeHtml(insetPhoto1)}" alt="Support">
-      </div>
-      <div class="inset-photo">
-        <img src="${escapeHtml(insetPhoto2)}" alt="Support">
-      </div>
-      <div class="inset-photo">
-        <img src="${escapeHtml(insetPhoto3)}" alt="Support">
-      </div>
-    </div>
-    
-    <div class="headline-section">
-      <div class="checkmark">✓</div>
-      <div class="headline">${escapeHtml(poster.headline)}</div>
-    </div>
-    
-    <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
-    </div>
-    
-    <div class="name-banner">
-      <div class="name">${escapeHtml(poster.name)}</div>
-    </div>
-    
-    <div class="designation">${escapeHtml(poster.designation || '')}</div>
-    <div class="organization">${escapeHtml([poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
-    <div class="location">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</div>
-  </div>
-</body>
-</html>`;
-}
-
 /**
  * Resolve which template to use for rendering.
- * NO FALLBACKS - if template not found, let caller handle error
  */
 export function resolveTemplate(poster: Poster, template?: Template | null): Template {
   if (template) return template;
@@ -839,40 +256,872 @@ export function resolveTemplate(poster: Poster, template?: Template | null): Tem
     null;
 
   if (targetId) {
-    // Exact ID match
-    const exactMatch = DEFAULT_TEMPLATES.find((t) => t.id === targetId);
+    // Handle legacy template ID mapping
+    const idMapping: Record<string, string> = {
+      'tpl-election-campaign': 'tpl-election-campaign',
+      'election-campaign': 'tpl-election-campaign',
+      'tpl-victory-day': 'tpl-victory-day', // Fallback
+    };
+
+    const mappedId = idMapping[targetId] || targetId;
+    const exactMatch = HARDCODED_TEMPLATES.find((t) => t.id === mappedId);
     if (exactMatch) return exactMatch;
 
-    // Partial match: 'tpl-political-campaign'.includes('political-campaign') or vice versa
-    const partialMatch = DEFAULT_TEMPLATES.find(
-      (t) => t.id.includes(targetId) || targetId.includes(t.id)
+    const partialMatch = HARDCODED_TEMPLATES.find(
+      (t) => t.id.includes(mappedId) || mappedId.includes(t.id)
     );
     if (partialMatch) return partialMatch;
 
-    // Occasion type match (e.g., 'political_campaign' maps to tpl-political-campaign)
-    const occasionFromId = targetId.replace('tpl-', '').replace(/-/g, '_');
-    const occasionMatch = DEFAULT_TEMPLATES.find((t) => t.occasion_type === occasionFromId);
+    const occasionFromId = mappedId.replace('tpl-', '').replace(/-/g, '_');
+    const occasionMatch = HARDCODED_TEMPLATES.find((t) => t.occasion_type === occasionFromId);
     if (occasionMatch) return occasionMatch;
   }
 
-  // Match by poster's own occasion field
-  const matched = DEFAULT_TEMPLATES.find((t) => t.occasion_type === poster.occasion);
+  const matched = HARDCODED_TEMPLATES.find((t) => t.occasion_type === poster.occasion);
   if (matched) return matched;
 
-  // NO FALLBACK - return null and let caller handle error
-  console.error('[RESOLVE TEMPLATE] No template found for poster:', poster.id, 'occasion:', poster.occasion, 'template_id:', poster.template_id);
-  return DEFAULT_TEMPLATES[0]; // Temporary fallback for debugging
+  return HARDCODED_TEMPLATES[0];
+}
+
+/**
+ * Template 1: মহান বিজয় দিবস - Premium with national colors, flag motifs, gold accents
+ */
+function generateVictoryDayTemplate(poster: Poster): string {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+  const insetPhoto1 = photos[1] || 'https://via.placeholder.com/120x120?text=Support';
+  const insetPhoto2 = photos[2] || 'https://via.placeholder.com/120x120?text=Support';
+  const insetPhoto3 = photos[3] || 'https://via.placeholder.com/120x120?text=Support';
+
+  return `
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(135deg, #003d2d 0%, #006a4e 50%, #004d3a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 350px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 8px solid #ffd700;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headline {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 54px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .name {
+      position: absolute;
+      top: 920px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 66px;
+      font-weight: 900;
+      color: #ffd700;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .designation {
+      position: absolute;
+      top: 1000px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffffff;
+      text-align: center;
+    }
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 600;
+      color: #ffd700;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="headline">${escapeHtml(poster.headline)}</div>
+    <div class="hero-photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+    </div>
+    <div class="name">${escapeHtml(poster.name)}</div>
+    <div class="designation">${escapeHtml(poster.designation || '')}</div>
+    <div class="footer">প্রচারে: ${escapeHtml(poster.organization || '')}</div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
+ * Template 2: শোক ও শ্রদ্ধাঞ্জলি - Premium with subdued memorial styling
+ */
+function generateCondolenceTemplate(poster: Poster): string {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+
+  return `
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(135deg, #1a2f4a 0%, #1e3a5f 50%, #162e4a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 350px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 8px solid #d4af37;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headline {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 50px;
+      font-weight: 900;
+      color: #d4af37;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .name {
+      position: absolute;
+      top: 920px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 66px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .designation {
+      position: absolute;
+      top: 1000px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: 700;
+      color: #f4e4bc;
+      text-align: center;
+    }
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 600;
+      color: #d4af37;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="headline">${escapeHtml(poster.headline)}</div>
+    <div class="hero-photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+    </div>
+    <div class="name">${escapeHtml(poster.name)}</div>
+    <div class="designation">${escapeHtml(poster.designation || '')}</div>
+    <div class="footer">স্মরণে: ${escapeHtml(poster.organization || '')}</div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
+ * Template 3: নির্বাচনী প্রচারণা - Using custom SVG template with dynamic injection
+ */
+async function generateElectionCampaignTemplate(poster: Poster): Promise<string> {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || '';
+  const secondPhoto = photos[1] || '';
+
+  try {
+    // Try to fetch SVG from the templates directory
+    const response = await fetch(new URL('/templates/election-campaign.svg', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').href);
+    if (!response.ok) {
+      throw new Error('Failed to fetch election campaign template');
+    }
+    let svgContent = await response.text();
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="headline-text"[^>]*>.*?<\/text>/s,
+      `<text id="headline-text" x="600" y="298" text-anchor="middle" fill="#FFF4B5" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="72" font-weight="800">${escapeHtml(poster.headline)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="name-text"[^>]*>.*?<\/text>/s,
+      `<text id="name-text" x="600" y="1018" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="76" font-weight="800">${escapeHtml(poster.name)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="designation-text"[^>]*>.*?<\/text>/s,
+      `<text id="designation-text" x="600" y="1115" text-anchor="middle" fill="#F5D878" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="40" font-weight="600">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="district-text"[^>]*>.*?<\/text>/s,
+      `<text id="district-text" x="600" y="1248" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="36" font-weight="600">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="information-line-1"[^>]*>.*?<\/text>/s,
+      `<text id="information-line-1" x="700" y="1415" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="29" font-weight="500">${escapeHtml(poster.headline || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="information-line-2"[^>]*>.*?<\/text>/s,
+      `<text id="information-line-2" x="700" y="1460" text-anchor="middle" fill="#C9D7D1" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24">${escapeHtml([poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="footer-text"[^>]*>.*?<\/text>/s,
+      `<text id="footer-text" x="600" y="1550" text-anchor="middle" fill="#DDB84A" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="22" font-weight="500" letter-spacing="1">প্রচারে: ${escapeHtml(poster.organization || '')}</text>`
+    );
+
+    if (mainPhoto) {
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-overlay"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-head"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-placeholder-body"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+
+      const mainImageElement = `
+      <image
+        id="photo-main-image"
+        href="${escapeHtml(mainPhoto)}"
+        x="315"
+        y="365"
+        width="570"
+        height="570"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-main)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-main"[^>]*\/>/s,
+        mainImageElement
+      );
+    }
+
+    if (secondPhoto) {
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-head-2"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-placeholder-body-2"[^>]*\/>/s, '');
+
+      const secondImageElement = `
+      <image
+        id="photo-2-image"
+        href="${escapeHtml(secondPhoto)}"
+        x="70"
+        y="1170"
+        width="210"
+        height="210"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-2)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-2"[^>]*\/>/s,
+        secondImageElement
+      );
+    }
+
+    return svgContent;
+  } catch (error) {
+    console.error('[ELECTION CAMPAIGN TEMPLATE] Error generating template:', error);
+    return generateElectionCampaignHTMLFallback(poster);
+  }
+}
+
+/**
+ * Template 4: ঈদ মোবারক - Using custom SVG template with dynamic injection
+ */
+async function generateEidMubarakTemplate(poster: Poster): Promise<string> {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || '';
+  const secondPhoto = photos[1] || '';
+  const thirdPhoto = photos[2] || '';
+
+  try {
+    const response = await fetch(new URL('/templates/eid-mubarak.svg', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').href);
+    if (!response.ok) {
+      throw new Error('Failed to fetch eid mubarak template');
+    }
+    let svgContent = await response.text();
+
+    // Replace headline
+    svgContent = svgContent.replace(
+      /<text[^>]*id="headline-text"[^>]*>.*?<\/text>/s,
+      `<text id="headline-text" x="120" y="635" fill="#07583F" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="78" font-weight="800">${escapeHtml(poster.headline)}</text>`
+    );
+
+    // Replace name
+    svgContent = svgContent.replace(
+      /<text[^>]*id="name-text"[^>]*>.*?<\/text>/s,
+      `<text id="name-text" x="90" y="1320" fill="#07583F" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="68" font-weight="800">${escapeHtml(poster.name)}</text>`
+    );
+
+    // Replace designation in banner
+    svgContent = svgContent.replace(
+      /<text[^>]*id="designation-text"[^>]*>.*?<\/text>/s,
+      `<text id="designation-text" x="600" y="1535" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="45" font-weight="800">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</text>`
+    );
+
+    // Replace location badge text
+    svgContent = svgContent.replace(
+      /<text[^>]*id="location-badge-text"[^>]*>.*?<\/text>/s,
+      `<text id="location-badge-text" x="70" y="36" fill="#07583F" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="25" font-weight="600">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</text>`
+    );
+
+    // Replace identity text
+    svgContent = svgContent.replace(
+      /<text[^>]*id="identity-text"[^>]*>.*?<\/text>/s,
+      `<text id="identity-text" x="95" y="1385" fill="#52645E" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="27" font-weight="500">${escapeHtml(poster.headline || '')}</text>`
+    );
+
+    // Replace greeting line
+    svgContent = svgContent.replace(
+      /<text[^>]*id="greeting-line-text"[^>]*>.*?<\/text>/s,
+      `<text id="greeting-line-text" x="125" y="790" fill="#263B34" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="40" font-weight="500">${escapeHtml('সবাইকে জানাই')}</text>`
+    );
+
+    // Replace festive text
+    svgContent = svgContent.replace(
+      /<text[^>]*id="festive-text"[^>]*>.*?<\/text>/s,
+      `<text id="festive-text" x="120" y="885" fill="url(#festive-gradient)" font-family="Hind Siliguri, Noto Sans Bengali, cursive" font-size="78" font-weight="800">${escapeHtml('ঈদের শুভেচ্ছা')}</text>`
+    );
+
+    // Main photo injection
+    if (mainPhoto) {
+      svgContent = svgContent.replace(/<rect[^>]*id="photo-placeholder-main"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-head-main"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-placeholder-body-main"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<ellipse[^>]*id="photo-placeholder-face-highlight"[^>]*\/>/s, '');
+
+      const mainImageElement = `
+      <image
+        id="photo-main-image"
+        href="${escapeHtml(mainPhoto)}"
+        x="600"
+        y="390"
+        width="510"
+        height="750"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-main)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<g[^>]*id="photo-slot-main"[^>]*>.*?<\/g>/s,
+        `<g id="photo-slot-main" clip-path="url(#photo-clip-main)">${mainImageElement}</g>`
+      );
+    }
+
+    // Photo 2 injection
+    if (secondPhoto) {
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-head-2"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-placeholder-body-2"[^>]*\/>/s, '');
+
+      const secondImageElement = `
+      <image
+        id="photo-2-image"
+        href="${escapeHtml(secondPhoto)}"
+        x="57"
+        y="102"
+        width="96"
+        height="96"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-2)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-2"[^>]*\/>/s,
+        secondImageElement
+      );
+    }
+
+    // Photo 3 injection
+    if (thirdPhoto) {
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-head-3"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-placeholder-body-3"[^>]*\/>/s, '');
+
+      const thirdImageElement = `
+      <image
+        id="photo-3-image"
+        href="${escapeHtml(thirdPhoto)}"
+        x="177"
+        y="102"
+        width="96"
+        height="96"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-3)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-3"[^>]*\/>/s,
+        thirdImageElement
+      );
+    }
+
+    return svgContent;
+  } catch (error) {
+    console.error('[EID MUBARAK TEMPLATE] Error generating template:', error);
+    return generateEidMubarakHTMLFallback(poster);
+  }
+}
+
+function generateEidMubarakHTMLFallback(poster: Poster): string {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+
+  return `
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(135deg, #FFFDF5 0%, #FFF9E9 50%, #F7EFD7 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 390px;
+      left: 850px;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 720px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headline {
+      position: absolute;
+      top: 635px;
+      left: 120px;
+      font-size: 78px;
+      font-weight: 800;
+      color: #07583F;
+      font-family: 'Hind Siliguri, Noto Sans Bengali', sans-serif;
+    }
+    .name {
+      position: absolute;
+      top: 1320px;
+      left: 90px;
+      font-size: 68px;
+      font-weight: 800;
+      color: #07583F;
+      font-family: 'Hind Siliguri, Noto Sans Bengali', sans-serif;
+    }
+    .festive-text {
+      position: absolute;
+      top: 885px;
+      left: 120px;
+      font-size: 78px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #087A55, #F0A52B, #E96A68, #C84E8A);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-family: 'Hind Siliguri, Noto Sans Bengali', cursive;
+    }
+    .banner {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 170px;
+      background: linear-gradient(90deg, #07563E, #063E2F, #042C22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .banner-text {
+      font-size: 45px;
+      font-weight: 800;
+      color: #FFFFFF;
+      font-family: 'Hind Siliguri, Noto Sans Bengali', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="hero-photo">
+      <img src="${mainPhoto}" alt="Main Photo" />
+    </div>
+    <div class="headline">${escapeHtml(poster.headline)}</div>
+    <div class="festive-text">ঈদের শুভেচ্ছা</div>
+    <div class="name">${escapeHtml(poster.name)}</div>
+    <div class="banner">
+      <div class="banner-text">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
+    </div>
+  </div>
+</body>
+</html>
+  `;
+}
+
+function generateElectionCampaignHTMLFallback(poster: Poster): string {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+
+  return `
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(135deg, #071F18 0%, #0B3024 50%, #260F16 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 350px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 8px solid #DDB84A;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headline {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 72px;
+      font-weight: 900;
+      color: #FFF4B5;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .name {
+      position: absolute;
+      top: 920px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 76px;
+      font-weight: 900;
+      color: #FFFFFF;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .designation {
+      position: absolute;
+      top: 1000px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      font-weight: 700;
+      color: #F5D878;
+      text-align: center;
+    }
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 600;
+      color: #DDB84A;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="headline">${escapeHtml(poster.headline)}</div>
+    <div class="hero-photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+    </div>
+    <div class="name">${escapeHtml(poster.name)}</div>
+    <div class="designation">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
+    <div class="footer">প্রচারে: ${escapeHtml(poster.organization || '')}</div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
+ * Template 4: পবিত্র ঈদ মোবারক / রমজান - Premium with Islamic motifs
+ */
+function generateEidRamadanTemplate(poster: Poster): string {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+
+  return `
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #047857 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 350px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 8px solid #ffd700;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headline {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 50px;
+      font-weight: 900;
+      color: #ffd700;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .name {
+      position: absolute;
+      top: 920px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 66px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .designation {
+      position: absolute;
+      top: 1000px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffd700;
+      text-align: center;
+    }
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 600;
+      color: #ffd700;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="headline">${escapeHtml(poster.headline)}</div>
+    <div class="hero-photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+    </div>
+    <div class="name">${escapeHtml(poster.name)}</div>
+    <div class="designation">${escapeHtml(poster.designation || '')}</div>
+    <div class="footer">শুভেচ্ছা: ${escapeHtml(poster.organization || '')}</div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
+ * Template 5: শুভেচ্ছা / উৎসব - Premium with festive colors
+ */
+function generateGreetingTemplate(poster: Poster): string {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+
+  return `
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 50%, #8b5cf6 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 350px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 8px solid #fbbf24;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headline {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 52px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .name {
+      position: absolute;
+      top: 920px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 66px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .designation {
+      position: absolute;
+      top: 1000px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 36px;
+      font-weight: 700;
+      color: #fbbf24;
+      text-align: center;
+    }
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 600;
+      color: #fbbf24;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="headline">${escapeHtml(poster.headline)}</div>
+    <div class="hero-photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+    </div>
+    <div class="name">${escapeHtml(poster.name)}</div>
+    <div class="designation">${escapeHtml(poster.designation || '')}</div>
+    <div class="footer">শুভেচ্ছা: ${escapeHtml(poster.organization || '')}</div>
+  </div>
+</body>
+</html>`;
 }
 
 /**
  * Generate high-resolution (1200x1600) poster HTML using template-specific HTML/CSS templates.
- * Each template has its own visual design with circular photo slots, banners, and Bangla fonts.
  */
-export function generatePosterHTML(
+export async function generatePosterHTML(
   poster: Poster,
   _layout?: LayoutSuggestion,
   template?: Template
-): string {
+): Promise<string> {
   const resolved = resolveTemplate(poster, template);
   const occasionType = resolved?.occasion_type || poster.occasion;
 
@@ -884,23 +1133,30 @@ export function generatePosterHTML(
   console.log('[POSTER RENDER] Photo URLs:', poster.photo_urls);
   console.log('========================================');
 
-  // Route to the appropriate HTML template based on occasion type
   switch (occasionType) {
-    case 'eid_greeting':
-      console.log('[POSTER RENDER] Using Eid Greeting template');
-      return generateEidGreetingTemplate(poster);
-    case 'political_campaign':
-      console.log('[POSTER RENDER] Using Political Campaign template');
-      return generatePoliticalCampaignTemplate(poster);
+    case 'victory_day':
+      console.log('[POSTER RENDER] Using Victory Day template');
+      return generateVictoryDayTemplate(poster);
     case 'condolence':
       console.log('[POSTER RENDER] Using Condolence template');
       return generateCondolenceTemplate(poster);
+    case 'political_campaign':
+      console.log('[POSTER RENDER] Using Election Campaign template (SVG-based)');
+      return await generateElectionCampaignTemplate(poster);
+    case 'eid_greeting':
+      console.log('[POSTER RENDER] Using Eid/Ramadan template');
+      return generateEidRamadanTemplate(poster);
+    case 'eid_mubarak':
+      console.log('[POSTER RENDER] Using Eid Mubarak template (SVG-based)');
+      return await generateEidMubarakTemplate(poster);
+    case 'greeting':
+      console.log('[POSTER RENDER] Using Greeting template');
+      return generateGreetingTemplate(poster);
     case 'tribute':
-      console.log('[POSTER RENDER] Using Tribute template');
-      return generateTributeTemplate(poster);
+      console.log('[POSTER RENDER] Using Tribute template (fallback to Greeting)');
+      return generateGreetingTemplate(poster);
     default:
-      // Fallback to political campaign for unknown types
-      console.warn('[POSTER RENDER] Unknown occasion type:', occasionType, 'falling back to political_campaign');
-      return generatePoliticalCampaignTemplate(poster);
+      console.warn('[POSTER RENDER] Unknown occasion type:', occasionType, 'falling back to election_campaign');
+      return await generateElectionCampaignTemplate(poster);
   }
 }
