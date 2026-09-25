@@ -83,7 +83,7 @@ async function main() {
   console.log('Generating test poster renderings...');
 
   for (const tc of testCases) {
-    const html = generatePosterHTML(tc.poster as Poster);
+    const html = await generatePosterHTML(tc.poster as Poster);
     const { buffer } = await renderPosterToImage(html, tc.name);
     const outPath = path.join(artifactDir, `test-poster-${tc.name}.png`);
     fs.writeFileSync(outPath, buffer);
