@@ -399,7 +399,7 @@ export async function regeneratePoster(req: AuthRequest, res: Response) {
       created_at: poster.createdAt.toISOString(),
     };
 
-    const html = generatePosterHTML(posterForHtml, layoutSuggestion, template || undefined);
+    const html = await generatePosterHTML(posterForHtml, layoutSuggestion, template || undefined);
 
     let generatedImageUrl = poster.generatedImageUrl;
     try {
