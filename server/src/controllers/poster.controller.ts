@@ -118,7 +118,7 @@ export async function createPoster(req: AuthRequest, res: Response) {
       created_at: poster.createdAt.toISOString(),
     };
 
-    const html = generatePosterHTML(posterDataForHtml, layoutSuggestion, matchedTemplate || undefined);
+    const html = await generatePosterHTML(posterDataForHtml, layoutSuggestion, matchedTemplate || undefined);
 
     // 4. Render with Puppeteer (1200x1600 print-ready PNG)
     let generatedImageUrl: string | null = null;
