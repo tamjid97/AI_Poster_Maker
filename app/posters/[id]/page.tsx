@@ -175,9 +175,9 @@ function PosterPreviewContent() {
             console.error('Fallback HTML generation also failed:', fallbackErr);
             htmlToUse = `<div style="display:flex;align-items:center;justify-content:center;height:100vh;background:#1a1a2e;color:#ffffff;font-family:sans-serif;text-align:center;padding:40px;">
               <div style="border:3px solid #ffd700;padding:30px;border-radius:12px;background:#16213e;max-width:600px;">
-                <h2 style="font-size:28px;margin-bottom:20px;color:#ffd700;">${escapeHtml(poster.headline)}</h2>
-                <p style="font-size:24px;color:#ffffff;margin-bottom:10px;">${escapeHtml(poster.name)}</p>
-                <p style="font-size:18px;color:#cccccc;">${escapeHtml(poster.designation || '')}</p>
+                <h2 style="font-size:28px;margin-bottom:20px;color:#ffd700;">${escapeHtml(poster?.headline || 'Poster')}</h2>
+                <p style="font-size:24px;color:#ffffff;margin-bottom:10px;">${escapeHtml(poster?.name || 'Unknown')}</p>
+                <p style="font-size:18px;color:#cccccc;">${escapeHtml(poster?.designation || '')}</p>
               </div>
             </div>`;
           }
