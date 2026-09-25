@@ -214,6 +214,13 @@ function CreatePosterContent() {
 
     if (result.success && result.data) {
       toast.success('Poster created successfully!');
+      // Store poster data in localStorage for temporary posters
+      if (result.data.poster.id.startsWith('temp-')) {
+        localStorage.setItem(`temp-poster-${result.data.poster.id}`, JSON.stringify({
+          poster: result.data.poster,
+          html: result.data.html,
+        }));
+      }
       router.push(`/posters/${result.data.poster.id}`);
     } else {
       const errorMsg = result.errors && result.errors.length > 0

@@ -1,0 +1,741 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200"
+     height="1625"
+     viewBox="0 0 1200 1625">
+
+  <title id="poster-title">Editable Two Photo Poster</title>
+  <defs>
+
+    <!-- =====================================================
+         GRADIENTS
+         ===================================================== -->
+
+    <linearGradient id="background-gradient"
+                    x1="0" y1="0"
+                    x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#dff8ff"/>
+    </linearGradient>
+
+    <linearGradient id="red-gradient"
+                    x1="0" y1="0"
+                    x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff1717"/>
+      <stop offset="100%" stop-color="#d50000"/>
+    </linearGradient>
+
+    <linearGradient id="green-gradient"
+                    x1="0" y1="0"
+                    x2="1" y2="1">
+      <stop offset="0%" stop-color="#079c45"/>
+      <stop offset="100%" stop-color="#43b916"/>
+    </linearGradient>
+
+    <linearGradient id="headline-red"
+                    x1="0" y1="0"
+                    x2="0" y2="1">
+      <stop offset="0%" stop-color="#ff1b1b"/>
+      <stop offset="100%" stop-color="#c80000"/>
+    </linearGradient>
+
+    <linearGradient id="headline-green"
+                    x1="0" y1="0"
+                    x2="0" y2="1">
+      <stop offset="0%" stop-color="#179943"/>
+      <stop offset="100%" stop-color="#00652c"/>
+    </linearGradient>
+
+
+    <!-- =====================================================
+         MAIN PHOTO CLIP
+         ===================================================== -->
+
+    <clipPath id="photo-clip-main">
+      <path d="
+        M20 1625
+        L20 1030
+        C65 900 145 820 275 790
+        C390 760 480 795 555 860
+        C620 915 655 1035 665 1160
+        L665 1625
+        Z"/>
+    </clipPath>
+
+
+    <!-- =====================================================
+         SECOND PHOTO CLIP
+         ===================================================== -->
+
+    <clipPath id="photo-clip-2">
+      <circle cx="175" cy="155" r="72"/>
+    </clipPath>
+
+
+    <filter id="photo-shadow"
+            x="-30%" y="-30%"
+            width="160%" height="160%">
+      <feDropShadow dx="0"
+                    dy="4"
+                    stdDeviation="5"
+                    flood-opacity=".25"/>
+    </filter>
+
+
+    <filter id="text-shadow"
+            x="-30%" y="-30%"
+            width="160%" height="160%">
+      <feDropShadow dx="2"
+                    dy="3"
+                    stdDeviation="2"
+                    flood-color="#000000"
+                    flood-opacity=".35"/>
+    </filter>
+
+  </defs>
+
+
+  <!-- =========================================================
+       BACKGROUND
+       ========================================================= -->
+
+  <g id="background">
+
+    <rect id="background-base"
+          x="0"
+          y="0"
+          width="1200"
+          height="1625"
+          fill="url(#background-gradient)"/>
+
+  </g>
+
+
+  <!-- =========================================================
+       TOP COLOR DESIGN
+       ========================================================= -->
+
+  <g id="top-design">
+
+    <!-- Green background -->
+    <path id="top-green"
+          d="
+          M0 0
+          H1200
+          V410
+          C1000 535 780 575 560 535
+          C330 495 130 420 0 350
+          Z"
+          fill="url(#green-gradient)"/>
+
+
+    <!-- Red sweeping section -->
+    <path id="top-red"
+          d="
+          M0 0
+          H1000
+          C900 180 760 320 565 410
+          C350 505 135 430 0 350
+          Z"
+          fill="url(#red-gradient)"/>
+
+
+    <!-- Lower green section -->
+    <path id="top-green-lower"
+          d="
+          M0 345
+          C175 450 365 520 580 510
+          C850 500 1060 405 1200 270
+          V525
+          C1000 650 800 700 570 680
+          C330 655 135 570 0 460
+          Z"
+          fill="#78bd19"/>
+
+
+    <!-- White curve -->
+    <path id="white-curve"
+          d="
+          M0 465
+          C190 600 375 675 600 670
+          C850 665 1050 555 1200 425
+          L1200 495
+          C1025 635 830 725 600 730
+          C350 735 155 650 0 540
+          Z"
+          fill="#ffffff"/>
+
+  </g>
+
+
+  <!-- =========================================================
+       BLUE DOT DECORATION
+       ========================================================= -->
+
+  <g id="blue-decoration"
+     fill="#55c9ed"
+     opacity=".55">
+
+    <circle id="blue-dot-1" cx="30" cy="720" r="6"/>
+    <circle id="blue-dot-2" cx="65" cy="750" r="4"/>
+    <circle id="blue-dot-3" cx="105" cy="715" r="5"/>
+    <circle id="blue-dot-4" cx="145" cy="765" r="6"/>
+    <circle id="blue-dot-5" cx="180" cy="730" r="4"/>
+
+    <circle id="blue-dot-6" cx="1070" cy="720" r="5"/>
+    <circle id="blue-dot-7" cx="1110" cy="755" r="6"/>
+    <circle id="blue-dot-8" cx="1150" cy="720" r="4"/>
+
+  </g>
+
+
+  <!-- =========================================================
+       TOP LABEL
+       ========================================================= -->
+
+  <g id="top-label"
+     font-family="Hind Siliguri, Noto Sans Bengali, sans-serif">
+
+    <text id="top-label-text"
+          x="600"
+          y="58"
+          text-anchor="middle"
+          fill="#ffffff"
+          font-size="21"
+          font-weight="600">
+      বিসমিল্লাহির রাহমানির রাহিম
+    </text>
+
+  </g>
+
+
+  <!-- =========================================================
+       PHOTO OPTION 2 — ONLY SMALL PHOTO
+       ========================================================= -->
+
+  <g id="photo-slot-2"
+     filter="url(#photo-shadow)">
+
+    <!-- White outer circle -->
+    <circle id="photo-2-outer"
+            cx="175"
+            cy="155"
+            r="78"
+            fill="#ffffff"/>
+
+    <!-- Photo placeholder -->
+    <circle id="photo-2-placeholder"
+            cx="175"
+            cy="155"
+            r="72"
+            fill="#bdbdbd"/>
+
+    <!-- Placeholder head -->
+    <circle id="photo-2-head"
+            cx="175"
+            cy="135"
+            r="27"
+            fill="#777777"/>
+
+    <!-- Placeholder body -->
+    <path id="photo-2-body"
+          d="
+          M128 215
+          C135 175 150 160 175 160
+          C200 160 215 175 222 215
+          Z"
+          fill="#666666"/>
+
+    <!-- Border -->
+    <circle id="photo-2-border"
+            cx="175"
+            cy="155"
+            r="76"
+            fill="none"
+            stroke="#ffffff"
+            stroke-width="5"/>
+
+  </g>
+
+
+  <!-- =========================================================
+       TOP SYMBOL
+       ========================================================= -->
+
+  <g id="top-symbol">
+
+    <path id="dove-shape"
+          d="
+          M500 175
+          C540 120 585 120 610 158
+          C575 150 550 170 530 215
+          Z"
+          fill="#ffffff"
+          opacity=".95"/>
+
+    <path id="dove-shape-2"
+          d="
+          M555 220
+          C595 175 630 175 650 205
+          C620 205 598 225 578 260
+          Z"
+          fill="#ffffff"
+          opacity=".85"/>
+
+    <circle id="symbol-dot-1"
+            cx="640"
+            cy="155"
+            r="5"
+            fill="#ffffff"/>
+
+    <circle id="symbol-dot-2"
+            cx="662"
+            cy="190"
+            r="4"
+            fill="#ffffff"/>
+
+  </g>
+
+
+  <!-- =========================================================
+       CENTRAL EMBLEM
+       ========================================================= -->
+
+  <g id="central-emblem">
+
+    <circle id="emblem-white"
+            cx="690"
+            cy="285"
+            r="112"
+            fill="#ffffff"/>
+
+    <circle id="emblem-green"
+            cx="690"
+            cy="285"
+            r="103"
+            fill="#079443"/>
+
+    <circle id="emblem-red"
+            cx="690"
+            cy="285"
+            r="78"
+            fill="#ed251e"/>
+
+    <circle id="emblem-orange"
+            cx="690"
+            cy="285"
+            r="62"
+            fill="#ef8517"/>
+
+    <text id="emblem-text-1"
+          x="690"
+          y="258"
+          text-anchor="middle"
+          font-family="Hind Siliguri, Noto Sans Bengali, sans-serif"
+          font-size="25"
+          font-weight="700"
+          fill="#ffffff">
+      পরিবর্তন
+    </text>
+
+    <text id="emblem-text-2"
+          x="690"
+          y="290"
+          text-anchor="middle"
+          font-family="Hind Siliguri, Noto Sans Bengali, sans-serif"
+          font-size="24"
+          font-weight="700"
+          fill="#ffffff">
+      ও উন্নয়ন
+    </text>
+
+    <text id="emblem-text-3"
+          x="690"
+          y="322"
+          text-anchor="middle"
+          font-family="Hind Siliguri, Noto Sans Bengali, sans-serif"
+          font-size="20"
+          font-weight="600"
+          fill="#ffffff">
+      সবার জন্য
+    </text>
+
+  </g>
+
+
+  <!-- =========================================================
+       LARGE NUMBER
+       ========================================================= -->
+
+  <g id="number-section"
+     font-family="Hind Siliguri, Noto Sans Bengali, sans-serif">
+
+    <text id="number-text"
+          x="450"
+          y="490"
+          text-anchor="middle"
+          fill="#ffffff"
+          stroke="#d90000"
+          stroke-width="11"
+          paint-order="stroke"
+          font-size="190"
+          font-weight="900"
+          filter="url(#text-shadow)">
+      ০৪
+    </text>
+
+    <text id="number-label"
+          x="535"
+          y="500"
+          fill="#ffffff"
+          stroke="#006b2e"
+          stroke-width="3"
+          paint-order="stroke"
+          font-size="44"
+          font-weight="800">
+      বছর
+    </text>
+
+  </g>
+
+
+  <!-- =========================================================
+       LEFT MESSAGE
+       ========================================================= -->
+
+  <g id="left-message"
+     font-family="Hind Siliguri, Noto Sans Bengali, sans-serif">
+
+    <text id="left-message-1"
+          x="75"
+          y="590"
+          fill="#006b2c"
+          font-size="40"
+          font-weight="900">
+      সবার
+    </text>
+
+    <text id="left-message-2"
+          x="75"
+          y="640"
+          fill="#e00000"
+          font-size="47"
+          font-weight="900">
+      জন্য
+    </text>
+
+    <!-- Small plant -->
+    <path id="plant-stem"
+          d="M170 650 Q180 600 175 555"
+          fill="none"
+          stroke="#4b8e20"
+          stroke-width="5"/>
+
+    <path id="plant-leaf-1"
+          d="M175 590
+             Q145 565 140 535
+             Q170 540 180 570
+             Z"
+          fill="#5b9e27"/>
+
+    <path id="plant-leaf-2"
+          d="M178 565
+             Q208 540 220 510
+             Q190 515 175 548
+             Z"
+          fill="#6aa62c"/>
+
+  </g>
+
+
+  <!-- =========================================================
+       MAIN PHOTO OPTION 1
+       ========================================================= -->
+
+  <g id="photo-slot-main">
+
+    <!-- Main photo placeholder -->
+    <rect id="main-photo-placeholder"
+          x="20"
+          y="790"
+          width="645"
+          height="835"
+          fill="#cfcfcf"
+          clip-path="url(#photo-clip-main)"/>
+
+    <!-- Placeholder head -->
+    <ellipse id="main-photo-head"
+             cx="330"
+             cy="970"
+             rx="115"
+             ry="145"
+             fill="#9d9d9d"/>
+
+    <!-- Placeholder neck -->
+    <path id="main-photo-neck"
+          d="
+          M270 1080
+          L390 1080
+          L410 1200
+          L250 1200
+          Z"
+          fill="#898989"/>
+
+    <!-- Placeholder body -->
+    <path id="main-photo-body"
+          d="
+          M90 1625
+          Q105 1260 245 1170
+          Q330 1115 415 1170
+          Q555 1260 580 1625
+          Z"
+          fill="#686868"/>
+
+    <!-- Shirt -->
+    <path id="main-photo-shirt"
+          d="
+          M250 1190
+          L330 1290
+          L410 1190
+          L505 1625
+          L155 1625
+          Z"
+          fill="#e5e5e5"/>
+
+    <!-- Tie -->
+    <path id="main-photo-tie"
+          d="
+          M315 1270
+          L345 1270
+          L375 1510
+          L330 1575
+          L285 1510
+          Z"
+          fill="#252525"/>
+
+  </g>
+
+
+  <!-- =========================================================
+       RIGHT INFORMATION
+       ========================================================= -->
+
+  <g id="right-information"
+     font-family="Hind Siliguri, Noto Sans Bengali, sans-serif">
+
+    <!-- Small badge -->
+    <rect id="right-badge"
+          x="815"
+          y="675"
+          width="210"
+          height="48"
+          rx="8"
+          fill="#e90000"/>
+
+    <text id="right-badge-text"
+          x="920"
+          y="708"
+          text-anchor="middle"
+          fill="#ffffff"
+          font-size="25"
+          font-weight="800">
+      নতুন নেতৃত্ব
+    </text>
+
+
+    <text id="right-info-1"
+          x="815"
+          y="765"
+          fill="#111111"
+          font-size="27"
+          font-weight="600">
+      দেশের মানুষের জন্য
+    </text>
+
+    <text id="right-info-2"
+          x="815"
+          y="805"
+          fill="#111111"
+          font-size="27"
+          font-weight="600">
+      নতুন পরিকল্পনা
+    </text>
+
+    <text id="right-info-3"
+          x="815"
+          y="855"
+          fill="#6b168d"
+          font-size="43"
+          font-weight="900">
+      পরিবর্তন
+    </text>
+
+  </g>
+
+
+  <!-- =========================================================
+       RIGHT HEADLINE
+       ========================================================= -->
+
+  <g id="main-headline"
+     font-family="Hind Siliguri, Noto Sans Bengali, sans-serif"
+     text-anchor="middle">
+
+    <text id="headline-red"
+          x="930"
+          y="1010"
+          fill="url(#headline-red)"
+          font-size="108"
+          font-weight="900"
+          filter="url(#text-shadow)">
+      প্রত্যয়
+    </text>
+
+    <text id="headline-green"
+          x="930"
+          y="1100"
+          fill="url(#headline-green)"
+          font-size="96"
+          font-weight="900"
+          filter="url(#text-shadow)">
+      পরিবর্তনে
+    </text>
+
+    <text id="headline-black"
+          x="930"
+          y="1180"
+          fill="#111111"
+          font-size="62"
+          font-weight="900">
+      সফল হউক
+    </text>
+
+  </g>
+
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+
+  <g id="footer"
+     font-family="Hind Siliguri, Noto Sans Bengali, sans-serif">
+
+    <!-- Footer red banner -->
+    <path id="footer-banner"
+          d="
+          M650 1340
+          H1200
+          V1520
+          H650
+          Q615 1520 615 1480
+          V1380
+          Q615 1340 650 1340
+          Z"
+          fill="#ed1515"/>
+
+
+    <!-- Footer round logo -->
+    <g id="footer-logo">
+
+      <circle id="footer-logo-white"
+              cx="605"
+              cy="1430"
+              r="65"
+              fill="#ffffff"/>
+
+      <circle id="footer-logo-green"
+              cx="605"
+              cy="1430"
+              r="56"
+              fill="#079443"/>
+
+      <circle id="footer-logo-red"
+              cx="605"
+              cy="1430"
+              r="34"
+              fill="#ed1d24"/>
+
+    </g>
+
+
+    <!-- Name -->
+    <text id="name-text"
+          x="700"
+          y="1418"
+          fill="#ffffff"
+          font-size="47"
+          font-weight="900">
+      নামের স্থান
+    </text>
+
+
+    <!-- Designation -->
+    <text id="designation-text"
+          x="700"
+          y="1467"
+          fill="#ffe86b"
+          font-size="27"
+          font-weight="600">
+      পদবী, সংগঠনের নাম
+    </text>
+
+
+    <!-- Contact -->
+    <text id="contact-text"
+          x="700"
+          y="1502"
+          fill="#ffffff"
+          font-size="20">
+      যোগাযোগ: ০১XXXXXXXXX
+    </text>
+
+  </g>
+
+
+  <!-- =========================================================
+       PHOTO INSERTION OPTIONS
+       =========================================================
+
+       OPTION 1 — MAIN PHOTO
+
+       <image
+         id="main-person-image"
+         x="20"
+         y="790"
+         width="645"
+         height="835"
+         preserveAspectRatio="xMidYMid slice"
+         clip-path="url(#photo-clip-main)"
+         href="YOUR_MAIN_PHOTO_URL"
+       />
+
+
+       OPTION 2 — SMALL PHOTO
+
+       <image
+         id="second-person-image"
+         x="103"
+         y="83"
+         width="144"
+         height="144"
+         preserveAspectRatio="xMidYMid slice"
+         clip-path="url(#photo-clip-2)"
+         href="YOUR_SECOND_PHOTO_URL"
+       />
+
+  -->
+
+
+  <!-- =========================================================
+       BORDER
+       ========================================================= -->
+
+  <rect id="print-border"
+        x="8"
+        y="8"
+        width="1184"
+        height="1609"
+        fill="none"
+        stroke="#f1d76a"
+        stroke-width="5"/>
+
+</svg>

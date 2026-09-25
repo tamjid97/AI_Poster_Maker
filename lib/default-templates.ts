@@ -189,4 +189,82 @@ export const DEFAULT_TEMPLATES: Template[] = [
     is_active: true,
     created_at: new Date().toISOString(),
   },
+  {
+    id: 'tpl-eid-mobarak-v2',
+    title: 'ঈদ মোবারক — লিডার ফটো (Eid Mubarak with Leader Photos)',
+    occasion_type: 'eid_mubarak',
+    thumbnail_url: '/templates/svg/eid-mobarak-v2.svg',
+    layout_config: {
+      background: {
+        gradient: ['#fffaf0', '#fff5df', '#f9e8c5'],
+        texture: 'subtle-pattern',
+        decorations: ['lantern', 'burst', 'moon', 'star']
+      },
+      photoSlots: [
+        { shape: 'bust', position: { x: '36.25%', y: '60.94%' }, size: '27.5%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '17.92%', y: '10.81%' }, size: '18.67%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '10.83%', y: '20.81%' }, size: '12%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '24.33%', y: '20.81%' }, size: '12%', border: 'gold', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Hind Siliguri', size: 122, color: '#e88919', effect: 'gradient', position: { x: '50%', y: '46.56%' } },
+        { field: 'name', font: 'Hind Siliguri', size: 58, color: '#ffffff', effect: 'none', position: { x: '50%', y: '89.38%' } },
+        { field: 'designation', font: 'Hind Siliguri', size: 28, color: '#e9e6d8', effect: 'none', position: { x: '50%', y: '93.13%' } }
+      ],
+      namePlate: {
+        style: 'banner',
+        gradient: ['#075b3a', '#063c2b'],
+        textColor: '#FFFFFF'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'ঈদ মোবারক'
+      },
+      colorScheme: {
+        primary: '#075b3a',
+        secondary: '#e88919',
+        accent: '#d99a24'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tpl-leadership-poster',
+    title: 'নতুন নেতৃত্ব — Leadership and Change Poster',
+    occasion_type: 'leadership',
+    thumbnail_url: '/templates/svg/leadership-poster.svg',
+    layout_config: {
+      background: {
+        gradient: ['#ffffff', '#dff8ff'],
+        texture: 'subtle-pattern',
+        decorations: ['dove', 'emblem', 'blue-dots']
+      },
+      photoSlots: [
+        { shape: 'path', position: { x: '1.67%', y: '48.62%' }, size: '53.75%', border: 'none', glow: false },
+        { shape: 'circle', position: { x: '14.58%', y: '9.54%' }, size: '12%', border: 'white', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Hind Siliguri', size: 108, color: '#ff1b1b', effect: 'gradient', position: { x: '77.5%', y: '62.15%' } },
+        { field: 'name', font: 'Hind Siliguri', size: 47, color: '#ffffff', effect: 'none', position: { x: '58.33%', y: '87.26%' } },
+        { field: 'designation', font: 'Hind Siliguri', size: 27, color: '#ffe86b', effect: 'none', position: { x: '58.33%', y: '90.28%' } }
+      ],
+      namePlate: {
+        style: 'banner',
+        gradient: ['#ed1515'],
+        textColor: '#FFFFFF'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'নতুন নেতৃত্ব'
+      },
+      colorScheme: {
+        primary: '#079c45',
+        secondary: '#ff1717',
+        accent: '#f1d76a'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
 ];

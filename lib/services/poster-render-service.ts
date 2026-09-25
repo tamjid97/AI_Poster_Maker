@@ -229,6 +229,84 @@ const HARDCODED_TEMPLATES: Template[] = [
     is_active: true,
     created_at: new Date().toISOString(),
   },
+  {
+    id: 'tpl-eid-mobarak-v2',
+    title: 'ঈদ মোবারক — লিডার ফটো (Eid Mubarak with Leader Photos)',
+    occasion_type: 'eid_mubarak',
+    thumbnail_url: '/templates/svg/eid-mobarak-v2.svg',
+    layout_config: {
+      background: {
+        gradient: ['#fffaf0', '#fff5df', '#f9e8c5'],
+        texture: 'subtle-pattern',
+        decorations: ['lantern', 'burst', 'moon', 'star']
+      },
+      photoSlots: [
+        { shape: 'bust', position: { x: '36.25%', y: '60.94%' }, size: '27.5%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '17.92%', y: '10.81%' }, size: '18.67%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '10.83%', y: '20.81%' }, size: '12%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '24.33%', y: '20.81%' }, size: '12%', border: 'gold', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Hind Siliguri', size: 122, color: '#e88919', effect: 'gradient', position: { x: '50%', y: '46.56%' } },
+        { field: 'name', font: 'Hind Siliguri', size: 58, color: '#ffffff', effect: 'none', position: { x: '50%', y: '89.38%' } },
+        { field: 'designation', font: 'Hind Siliguri', size: 28, color: '#e9e6d8', effect: 'none', position: { x: '50%', y: '93.13%' } }
+      ],
+      namePlate: {
+        style: 'banner',
+        gradient: ['#075b3a', '#063c2b'],
+        textColor: '#FFFFFF'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'ঈদ মোবারক'
+      },
+      colorScheme: {
+        primary: '#075b3a',
+        secondary: '#e88919',
+        accent: '#d99a24'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
+    id: 'tpl-leadership-poster',
+    title: 'নতুন নেতৃত্ব — Leadership and Change Poster',
+    occasion_type: 'leadership',
+    thumbnail_url: '/templates/svg/leadership-poster.svg',
+    layout_config: {
+      background: {
+        gradient: ['#ffffff', '#dff8ff'],
+        texture: 'subtle-pattern',
+        decorations: ['dove', 'emblem', 'blue-dots']
+      },
+      photoSlots: [
+        { shape: 'path', position: { x: '1.67%', y: '48.62%' }, size: '53.75%', border: 'none', glow: false },
+        { shape: 'circle', position: { x: '14.58%', y: '9.54%' }, size: '12%', border: 'white', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Hind Siliguri', size: 108, color: '#ff1b1b', effect: 'gradient', position: { x: '77.5%', y: '62.15%' } },
+        { field: 'name', font: 'Hind Siliguri', size: 47, color: '#ffffff', effect: 'none', position: { x: '58.33%', y: '87.26%' } },
+        { field: 'designation', font: 'Hind Siliguri', size: 27, color: '#ffe86b', effect: 'none', position: { x: '58.33%', y: '90.28%' } }
+      ],
+      namePlate: {
+        style: 'banner',
+        gradient: ['#ed1515'],
+        textColor: '#FFFFFF'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'নতুন নেতৃত্ব'
+      },
+      colorScheme: {
+        primary: '#079c45',
+        secondary: '#ff1717',
+        accent: '#f1d76a'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
 ];
 
 /**
@@ -1117,46 +1195,469 @@ function generateGreetingTemplate(poster: Poster): string {
 /**
  * Generate high-resolution (1200x1600) poster HTML using template-specific HTML/CSS templates.
  */
+/**
+ * Fallback HTML generator - simple but always works
+ */
+function generateFallbackHTML(poster: Poster): string {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+
+  return `
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
+    .poster {
+      width: 1200px;
+      height: 1600px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-photo {
+      position: absolute;
+      top: 400px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      border: 8px solid #ffd700;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .headline {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 60px;
+      font-weight: 900;
+      color: #ffffff;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      max-width: 1000px;
+    }
+    .name {
+      position: absolute;
+      top: 950px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 70px;
+      font-weight: 900;
+      color: #ffd700;
+      text-align: center;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .designation {
+      position: absolute;
+      top: 1050px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      font-weight: 700;
+      color: #ffffff;
+      text-align: center;
+    }
+    .footer {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      font-weight: 600;
+      color: #ffd700;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <div class="headline">${escapeHtml(poster.headline)}</div>
+    <div class="hero-photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+    </div>
+    <div class="name">${escapeHtml(poster.name)}</div>
+    <div class="designation">${escapeHtml(poster.designation || '')}</div>
+    <div class="footer">${escapeHtml(poster.organization || poster.party || '')}</div>
+  </div>
+</body>
+</html>`;
+}
+
+/**
+ * Template 6: নতুন নেতৃত্ব — Leadership Poster with 2 photo slots
+ */
+async function generateLeadershipPosterTemplate(poster: Poster): Promise<string> {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || '';
+  const secondPhoto = photos[1] || '';
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const response = await fetch(new URL('/templates/svg/leadership-poster.svg', baseUrl).href);
+    if (!response.ok) {
+      throw new Error('Failed to fetch leadership poster template');
+    }
+    let svgContent = await response.text();
+
+    // Replace headline text (the 3-line headline on the right side)
+    if (poster.headline && poster.headline.trim() !== '') {
+      // Split headline into 3 parts if possible, otherwise use defaults
+      const headlineParts = poster.headline.split(' ');
+      const part1 = headlineParts[0] || 'প্রত্যয়';
+      const part2 = headlineParts[1] || 'পরিবর্তনে';
+      const part3 = headlineParts.slice(2).join(' ') || 'সফল হউক';
+
+      svgContent = svgContent.replace(
+        /<text[^>]*id="headline-red"[^>]*>.*?<\/text>/s,
+        `<text id="headline-red" x="930" y="1010" text-anchor="middle" fill="url(#headline-red)" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="108" font-weight="900" filter="url(#text-shadow)">${escapeHtml(part1)}</text>`
+      );
+
+      svgContent = svgContent.replace(
+        /<text[^>]*id="headline-green"[^>]*>.*?<\/text>/s,
+        `<text id="headline-green" x="930" y="1100" text-anchor="middle" fill="url(#headline-green)" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="96" font-weight="900" filter="url(#text-shadow)">${escapeHtml(part2)}</text>`
+      );
+
+      svgContent = svgContent.replace(
+        /<text[^>]*id="headline-black"[^>]*>.*?<\/text>/s,
+        `<text id="headline-black" x="930" y="1180" text-anchor="middle" fill="#111111" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="62" font-weight="900">${escapeHtml(part3)}</text>`
+      );
+    }
+
+    // Replace name
+    svgContent = svgContent.replace(
+      /<text[^>]*id="name-text"[^>]*>.*?<\/text>/s,
+      `<text id="name-text" x="700" y="1418" fill="#ffffff" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="47" font-weight="900">${escapeHtml(poster.name)}</text>`
+    );
+
+    // Replace designation/party/organization
+    const designationText = [poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || 'পদবী, সংগঠনের নাম';
+    svgContent = svgContent.replace(
+      /<text[^>]*id="designation-text"[^>]*>.*?<\/text>/s,
+      `<text id="designation-text" x="700" y="1467" fill="#ffe86b" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="27" font-weight="600">${escapeHtml(designationText)}</text>`
+    );
+
+    // Insert main photo (large path-based slot)
+    if (mainPhoto) {
+      // Remove all placeholder elements
+      svgContent = svgContent.replace(/<rect[^>]*id="main-photo-placeholder"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<ellipse[^>]*id="main-photo-head"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="main-photo-neck"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="main-photo-body"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="main-photo-shirt"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="main-photo-tie"[^>]*\/>/s, '');
+
+      const mainImageElement = `
+      <image
+        id="main-person-image"
+        href="${escapeHtml(mainPhoto)}"
+        x="20"
+        y="790"
+        width="645"
+        height="835"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-main)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<\/g>\s*<\/g>\s*<!--\s*RIGHT INFORMATION/s,
+        `${mainImageElement}
+    </g>
+  </g>
+
+
+  <!-- =========================================================
+       RIGHT INFORMATION`
+      );
+    }
+
+    // Insert second photo (small circular slot)
+    if (secondPhoto) {
+      // Remove placeholder elements
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-2-placeholder"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-2-head"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-2-body"[^>]*\/>/s, '');
+
+      const secondImageElement = `
+      <image
+        id="second-person-image"
+        href="${escapeHtml(secondPhoto)}"
+        x="103"
+        y="83"
+        width="144"
+        height="144"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-2)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<\/g>\s*<\/g>\s*<!--\s*TOP SYMBOL/s,
+        `${secondImageElement}
+    </g>
+  </g>
+
+
+  <!-- =========================================================
+       TOP SYMBOL`
+      );
+    }
+
+    return svgContent;
+  } catch (error) {
+    console.error('[LEADERSHIP POSTER TEMPLATE] Error generating template:', error);
+    return generateFallbackHTML(poster);
+  }
+}
+
+/**
+ * Template 5: ঈদ মোবারক V2 — Custom SVG with leader photo slots
+ */
+async function generateEidMubarakV2Template(poster: Poster): Promise<string> {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || '';
+  const leaderPhoto1 = photos[1] || '';
+  const leaderPhoto2 = photos[2] || '';
+  const leaderPhoto3 = photos[3] || '';
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3004';
+    const response = await fetch(new URL('/templates/svg/eid-mobarak-v2.svg', baseUrl).href);
+    if (!response.ok) {
+      throw new Error('Failed to fetch eid mubarak v2 template');
+    }
+    let svgContent = await response.text();
+
+    // Replace headline - only if user provided custom headline, otherwise keep default
+    if (poster.headline && poster.headline.trim() !== '') {
+      svgContent = svgContent.replace(
+        /<text[^>]*id="headline-text"[^>]*>.*?<\/text>/s,
+        `<text id="headline-text" x="600" y="745" text-anchor="middle" fill="url(#headline-gradient)" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="122" font-weight="900" letter-spacing="1">${escapeHtml(poster.headline)}</text>`
+      );
+    }
+
+    // Replace message lines (tspans)
+    const defaultMessageLine1 = 'ঈদ মোবারক! দেশ ও বিদেশের সকল ধর্মপ্রাণ';
+    const defaultMessageLine2 = 'মুসলিম ভাই ও বোনদের জানাই ঈদের শুভেচ্ছা।';
+    
+    // You can customize message logic here - for now keeping defaults
+    svgContent = svgContent.replace(
+      /<tspan[^>]*id="message-line-1"[^>]*>.*?<\/tspan>/s,
+      `<tspan id="message-line-1" x="600" dy="0">${escapeHtml(defaultMessageLine1)}</tspan>`
+    );
+    
+    svgContent = svgContent.replace(
+      /<tspan[^>]*id="message-line-2"[^>]*>.*?<\/tspan>/s,
+      `<tspan id="message-line-2" x="600" dy="43">${escapeHtml(defaultMessageLine2)}</tspan>`
+    );
+
+    // Replace name
+    svgContent = svgContent.replace(
+      /<text[^>]*id="name-text"[^>]*>.*?<\/text>/s,
+      `<text id="name-text" x="600" y="1430" text-anchor="middle" fill="#ffffff" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="58" font-weight="800">${escapeHtml(poster.name)}</text>`
+    );
+
+    // Replace designation/party
+    const designationText = [poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || 'পদবী, দলের নাম';
+    svgContent = svgContent.replace(
+      /<text[^>]*id="designation-text"[^>]*>.*?<\/text>/s,
+      `<text id="designation-text" x="600" y="1490" text-anchor="middle" fill="#e9e6d8" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="28" font-weight="500">${escapeHtml(designationText)}</text>`
+    );
+
+    // Insert main person photo
+    if (mainPhoto) {
+      // Remove placeholder silhouettes
+      svgContent = svgContent.replace(/<path[^>]*id="main-silhouette"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<ellipse[^>]*id="main-silhouette-head"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="main-silhouette-neck"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="main-silhouette-shoulders"[^>]*\/>/s, '');
+
+      const mainImageElement = `
+      <image
+        id="main-person-photo"
+        href="${escapeHtml(mainPhoto)}"
+        x="435"
+        y="975"
+        width="330"
+        height="285"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-main)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<\/g>\s*<\/g>\s*<\/g>\s*<!--\s*EDITABLE PHOTO INSERTION GUIDE/s,
+        `${mainImageElement}
+    </g>
+  </g>
+
+  <!-- =========================================================
+       EDITABLE PHOTO INSERTION GUIDE`
+      );
+    }
+
+    // Insert leader photo 1 (top, larger)
+    if (leaderPhoto1) {
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-slot-1-head"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-slot-1-body"[^>]*\/>/s, '');
+
+      const leader1ImageElement = `
+      <image
+        id="leader-photo-1"
+        href="${escapeHtml(leaderPhoto1)}"
+        x="103"
+        y="173"
+        width="224"
+        height="224"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-1)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<\/g>\s*<\/g>\s*<!--\s*PHOTO SLOT 2 — SMALL LOWER LEFT/s,
+        `${leader1ImageElement}
+    </g>
+  </g>
+
+
+  <!-- =====================================================
+       PHOTO SLOT 2 — SMALL LOWER LEFT`
+      );
+    }
+
+    // Insert leader photo 2 (bottom-left, smaller)
+    if (leaderPhoto2) {
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-slot-2-head"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-slot-2-body"[^>]*\/>/s, '');
+
+      const leader2ImageElement = `
+      <image
+        id="leader-photo-2"
+        href="${escapeHtml(leaderPhoto2)}"
+        x="58"
+        y="333"
+        width="144"
+        height="144"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-2)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<\/g>\s*<\/g>\s*<!--\s*PHOTO SLOT 3 — SMALL LOWER RIGHT/s,
+        `${leader2ImageElement}
+    </g>
+  </g>
+
+
+  <!-- =====================================================
+       PHOTO SLOT 3 — SMALL LOWER RIGHT`
+      );
+    }
+
+    // Insert leader photo 3 (bottom-right, smaller)
+    if (leaderPhoto3) {
+      svgContent = svgContent.replace(/<circle[^>]*id="photo-slot-3-head"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*id="photo-slot-3-body"[^>]*\/>/s, '');
+
+      const leader3ImageElement = `
+      <image
+        id="leader-photo-3"
+        href="${escapeHtml(leaderPhoto3)}"
+        x="220"
+        y="333"
+        width="144"
+        height="144"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-3)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<\/g>\s*<\/g>\s*<!--\s*HEADLINE/s,
+        `${leader3ImageElement}
+    </g>
+  </g>
+
+
+  <!-- =========================================================
+       HEADLINE`
+      );
+    }
+
+    return svgContent;
+  } catch (error) {
+    console.error('[EID MUBARAK V2 TEMPLATE] Error generating template:', error);
+    return generateFallbackHTML(poster);
+  }
+}
+
 export async function generatePosterHTML(
   poster: Poster,
   _layout?: LayoutSuggestion,
   template?: Template
 ): Promise<string> {
-  const resolved = resolveTemplate(poster, template);
-  const occasionType = resolved?.occasion_type || poster.occasion;
+  try {
+    const resolved = resolveTemplate(poster, template);
+    const occasionType = resolved?.occasion_type || poster.occasion;
+    const templateId = resolved?.id || '';
 
-  console.log('========================================');
-  console.log('[POSTER RENDER] Generating poster for occasion:', occasionType);
-  console.log('[POSTER RENDER] Resolved template ID:', resolved?.id);
-  console.log('[POSTER RENDER] Poster name:', poster.name);
-  console.log('[POSTER RENDER] Poster headline:', poster.headline);
-  console.log('[POSTER RENDER] Photo URLs:', poster.photo_urls);
-  console.log('========================================');
+    console.log('========================================');
+    console.log('[POSTER RENDER] Generating poster for occasion:', occasionType);
+    console.log('[POSTER RENDER] Resolved template ID:', resolved?.id);
+    console.log('[POSTER RENDER] Poster name:', poster.name);
+    console.log('[POSTER RENDER] Poster headline:', poster.headline);
+    console.log('[POSTER RENDER] Photo URLs:', poster.photo_urls);
+    console.log('========================================');
 
-  switch (occasionType) {
-    case 'victory_day':
-      console.log('[POSTER RENDER] Using Victory Day template');
-      return generateVictoryDayTemplate(poster);
-    case 'condolence':
-      console.log('[POSTER RENDER] Using Condolence template');
-      return generateCondolenceTemplate(poster);
-    case 'political_campaign':
-      console.log('[POSTER RENDER] Using Election Campaign template (SVG-based)');
-      return await generateElectionCampaignTemplate(poster);
-    case 'eid_greeting':
-      console.log('[POSTER RENDER] Using Eid/Ramadan template');
-      return generateEidRamadanTemplate(poster);
-    case 'eid_mubarak':
-      console.log('[POSTER RENDER] Using Eid Mubarak template (SVG-based)');
-      return await generateEidMubarakTemplate(poster);
-    case 'greeting':
-      console.log('[POSTER RENDER] Using Greeting template');
-      return generateGreetingTemplate(poster);
-    case 'tribute':
-      console.log('[POSTER RENDER] Using Tribute template (fallback to Greeting)');
-      return generateGreetingTemplate(poster);
-    default:
-      console.warn('[POSTER RENDER] Unknown occasion type:', occasionType, 'falling back to election_campaign');
-      return await generateElectionCampaignTemplate(poster);
+    // Check for specific template ID first
+    if (templateId === 'tpl-eid-mobarak-v2') {
+      console.log('[POSTER RENDER] Using Eid Mubarak V2 template (custom SVG with leader photos)');
+      return await generateEidMubarakV2Template(poster);
+    }
+
+    if (templateId === 'tpl-leadership-poster') {
+      console.log('[POSTER RENDER] Using Leadership poster template (custom SVG with 2 photo slots)');
+      return await generateLeadershipPosterTemplate(poster);
+    }
+
+    switch (occasionType) {
+      case 'victory_day':
+        console.log('[POSTER RENDER] Using Victory Day template');
+        return generateVictoryDayTemplate(poster);
+      case 'condolence':
+        console.log('[POSTER RENDER] Using Condolence template');
+        return generateCondolenceTemplate(poster);
+      case 'political_campaign':
+        console.log('[POSTER RENDER] Using Election Campaign template (SVG-based)');
+        return await generateElectionCampaignTemplate(poster);
+      case 'eid_greeting':
+        console.log('[POSTER RENDER] Using Eid/Ramadan template');
+        return generateEidRamadanTemplate(poster);
+      case 'eid_mubarak':
+        console.log('[POSTER RENDER] Using Eid Mubarak template (SVG-based)');
+        return await generateEidMubarakTemplate(poster);
+      case 'greeting':
+        console.log('[POSTER RENDER] Using Greeting template');
+        return generateGreetingTemplate(poster);
+      case 'leadership':
+        console.log('[POSTER RENDER] Using Leadership poster template (custom SVG)');
+        return await generateLeadershipPosterTemplate(poster);
+      case 'tribute':
+        console.log('[POSTER RENDER] Using Tribute template (fallback to Greeting)');
+        return generateGreetingTemplate(poster);
+      default:
+        console.warn('[POSTER RENDER] Unknown occasion type:', occasionType, 'falling back to election_campaign');
+        return await generateElectionCampaignTemplate(poster);
+    }
+  } catch (error) {
+    console.error('[POSTER RENDER] Error generating poster, using fallback:', error);
+    return generateFallbackHTML(poster);
   }
 }

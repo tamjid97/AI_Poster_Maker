@@ -204,7 +204,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const mockUser: AuthUser = {
         id: 'offline-user',
         email: email || 'offline@test.com',
-        name: 'Offline User',
+        name: email.split('@')[0] || 'Offline User',
         role: 'USER',
       };
       setUser(mockUser);

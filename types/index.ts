@@ -6,6 +6,10 @@ export type OccasionType =
   | 'political_campaign'
   | 'condolence'
   | 'eid_greeting'
+  | 'eid_mubarak'
+  | 'greeting'
+  | 'victory_day'
+  | 'leadership'
   | 'tribute';
 
 export interface Profile {
@@ -101,6 +105,10 @@ export const OCCASION_LABELS: Record<string, string> = {
   political_campaign: 'Political Worker / Campaign',
   condolence: 'Condolence / Mourning',
   eid_greeting: 'Eid / Greeting',
+  eid_mubarak: 'Eid Mubarak',
+  greeting: 'Greeting / Celebration',
+  victory_day: 'Victory Day',
+  leadership: 'Leadership / Change',
   tribute: 'Tribute / Special Occasion',
 };
 
