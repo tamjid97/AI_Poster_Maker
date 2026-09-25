@@ -361,8 +361,9 @@ function PosterPreviewContent() {
                 <CardContent className="p-4 sm:p-6 flex flex-col items-center justify-center bg-muted/20">
                   <div
                     ref={containerRef}
-                    className="relative w-full max-w-[560px] mx-auto overflow-hidden rounded-xl shadow-2xl border border-border/80 bg-neutral-950"
+                    className="relative w-full overflow-hidden rounded-xl shadow-2xl border border-border/80 bg-neutral-950"
                     style={{
+                      maxWidth: '100%',
                       aspectRatio: '3/4',
                     }}
                   >
@@ -402,9 +403,11 @@ function PosterPreviewContent() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Created</span>
                     <span className="text-sm font-medium">
-                      {new Date(poster.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric', month: 'short', day: 'numeric',
-                      })}
+                      {poster.created_at
+                        ? new Date(poster.created_at).toLocaleDateString('en-US', {
+                            year: 'numeric', month: 'short', day: 'numeric',
+                          })
+                        : 'N/A'}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
