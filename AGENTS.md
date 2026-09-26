@@ -45,23 +45,40 @@
 - Added 'Hind Siliguri' to Google Fonts imports in fallback templates
 - Ensured all font imports use proper preconnect headers
 
-## New Template Added
+### 6. Password Input Validation Bug
+**Problem**: Password and Confirm Password fields showed "Required" error text even when they had values typed in, due to ref forwarding issue in PasswordInput component.
 
-### Victory Day SVG Template
-**Added**: New detailed Victory Day SVG template with modern design elements
+**Fix**:
+- Converted `PasswordInput` component to use `forwardRef` to properly handle react-hook-form's ref
+- Added `mode: 'onChange'` to both register and login forms for real-time validation
+- Applied fix to both register and login pages
 
-**Features**:
-- Detailed SVG design with red sun, bird silhouettes, monument silhouettes
-- Single photo slot with cyan ring design
-- Blue wave decorations at bottom
-- Contact information section
-- Proper Hind Siliguri font support
-- Fallback to HTML template if SVG fails
+### 7. Template Display Issues
+**Problem**: Too many templates were shown (8 total), and the second template (condolence) had poor visibility with low opacity elements.
 
-**Files Modified**:
-- `public/templates/victory-day.svg` - Replaced with new detailed SVG
-- `lib/services/poster-render-service.ts` - Added `generateVictoryDaySVGTemplate` function
-- `lib/default-templates.ts` - Updated Victory Day template configuration
+**Fix**:
+- Reduced templates from 8 to 4, keeping only: Victory Day, Condolence, Election Campaign, and Eid Greeting
+- Enhanced Condolence template (template-2.svg) with:
+  - Brighter background gradient (from #0A0A0A to #1A1A1A)
+  - Enhanced border visibility (increased stroke width and opacity)
+  - Improved photo placeholder colors (from #2A2A2A to #3A3A3A)
+  - Enhanced candle icons with better visibility and flame glow effects
+  - Added cross symbol to black ribbon emblem
+  - Improved text contrast with lighter colors
+
+## Template Configuration
+
+### Current Active Templates (4 total)
+1. **Victory Day** (`tpl-victory-day`) - মহান বিজয় দিবস
+2. **Condolence** (`tpl-condolence`) - শোক ও শ্রদ্ধাঞ্জলি (Enhanced)
+3. **Election Campaign** (`tpl-election-campaign`) - নির্বাচনী প্রচারণা
+4. **Eid Greeting** (`tpl-eid-greeting`) - পবিত্র ঈদ মোবারক
+
+### Removed Templates
+- Youth Rally (`tpl-youth-rally`)
+- Eid Mubarak (`tpl-eid-mubarak`)
+- Eid Mubarak V2 (`tpl-eid-mobarak-v2`)
+- Leadership Poster (`tpl-leadership-poster`)
 
 ## Files Modified
 
@@ -81,10 +98,27 @@
    - Added new Victory Day SVG template function
 
 3. **lib/default-templates.ts**
-   - Updated Victory Day template configuration for new SVG design
+   - Reduced from 8 templates to 4 templates
+   - Removed youth rally, eid mubarak, eid mubarak v2, and leadership poster templates
+   - Kept only Victory Day, Condolence, Election Campaign, and Eid Greeting templates
 
-4. **public/templates/victory-day.svg**
-   - Replaced simple template with detailed SVG design
+4. **public/templates/template-2.svg**
+   - Enhanced background gradient for better visibility
+   - Improved border styling and visibility
+   - Enhanced photo placeholder colors
+   - Improved candle icons with flame glow effects
+   - Added cross symbol to black ribbon emblem
+   - Enhanced text contrast
+
+5. **components/password-input.tsx**
+   - Converted to use `forwardRef` for proper react-hook-form integration
+   - Added proper displayName for component
+
+6. **app/register/page.tsx**
+   - Added `mode: 'onChange'` for real-time validation
+
+7. **app/login/page.tsx**
+   - Added `mode: 'onChange'` for real-time validation
 
 ## Testing Recommendations
 
@@ -93,7 +127,10 @@
 3. **Test network conditions**: Test with slow network connections to verify retry logic works
 4. **Test environment variables**: Verify `NEXT_PUBLIC_APP_URL` is set correctly in Vercel
 5. **Test SVG templates**: Try all template types to ensure they fetch and render correctly
-6. **Test new Victory Day template**: Create a Victory Day poster and verify the new SVG design renders properly
+6. **Test template selection**: Verify only 4 templates are shown in the create poster page
+7. **Test condolence template**: Verify the enhanced condolence template displays properly with better visibility
+8. **Test password validation**: Test register and login forms to ensure password validation works correctly
+9. **Test form submission**: Complete a full registration flow to confirm no validation bugs block submission
 
 ## Environment Variables Required
 
@@ -110,4 +147,5 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 - Increased rendering time by ~1-2 seconds due to proper loading waits
 - Added reliability improvements that prevent layout failures
 - Retry logic adds minimal overhead but significantly improves success rate
-- New Victory Day SVG template may add slight rendering time due to complex design elements
+- Reduced template count improves performance and user experience
+- Enhanced condolence template may have slightly larger file size due to improved visual elements
