@@ -46,6 +46,7 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
+    mode: 'onChange', // Enable real-time validation as user types
   });
 
   const onSubmit = async (data: RegisterValues) => {
