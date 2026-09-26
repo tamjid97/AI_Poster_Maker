@@ -58,6 +58,12 @@ export interface Poster {
   district: string | null;
   occasion: string;
   headline: string;
+  message: string | null;
+  phone: string | null;
+  email: string | null;
+  event_date: string | null;
+  venue: string | null;
+  event_time: string | null;
   photo_urls: string[];
   generated_image_url: string | null;
   layout_suggestion: LayoutSuggestion | null;

@@ -28,24 +28,7 @@ export async function renderPosterToImage(
     });
 
     // Set full HTML content
-    const fullHtml = `
-      <!DOCTYPE html>
-      <html lang="bn">
-        <head>
-          <meta charset="UTF-8">
-          <link rel="preconnect" href="https://fonts.googleapis.com">
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-          <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-          <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            body { background: #000; width: 1200px; height: 1600px; overflow: hidden; font-family: 'Noto Sans Bengali', sans-serif; }
-          </style>
-        </head>
-        <body>
-          ${htmlContent}
-        </body>
-      </html>
-    `;
+    const fullHtml = htmlContent;
 
     await page.setContent(fullHtml, { waitUntil: ['domcontentloaded', 'networkidle0'] });
 
@@ -75,7 +58,11 @@ export async function renderPosterToImage(
       const svgImages = Array.from(document.querySelectorAll('image'));
       const svgImagePromises = svgImages.map(img => {
         return new Promise((resolve) => {
-          setTimeout(resolve, 3000); // Give SVG images time to load
+          // SVG image elements don't have a 'complete' property like HTML img elements
+          // So we just wait for load/error events with a timeout
+          img.addEventListener('load', resolve);
+          img.addEventListener('error', resolve);
+          setTimeout(resolve, 3000); // Timeout after 3 seconds for SVG images
         });
       });
       await Promise.all(svgImagePromises);

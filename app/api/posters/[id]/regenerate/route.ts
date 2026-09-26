@@ -89,6 +89,12 @@ export async function POST(
         district: 'Dhaka',
         occasion: 'eid_mubarak',
         headline: 'ঈদ মোবারক — Happy Eid Mubarak to all',
+        message: null,
+        phone: null,
+        email: null,
+        event_date: null,
+        venue: null,
+        event_time: null,
         photo_urls: [],
         generated_image_url: null,
         layout_suggestion: {

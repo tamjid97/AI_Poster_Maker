@@ -1,35 +1,23 @@
 import { PrismaClient } from '@prisma/client';
 import { DEFAULT_TEMPLATES } from '../lib/default-templates';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const prisma = new PrismaClient();
 
 async function main() {
   console.log('Seeding templates...');
 
-  // The only 4 allowed template slugs
-  const allowedSlugs = DEFAULT_TEMPLATES.map((t) => t.id);
+  // 1. Delete ALL templates first to ensure clean state
+  await prisma.template.deleteMany({});
+  console.log('Deleted all existing templates from database');
 
-  // 1. Remove all other templates that are NOT one of the 4 allowed templates
-  await prisma.template.deleteMany({
-    where: {
-      slug: {
-        notIn: allowedSlugs,
-      },
-    },
-  });
-
-  // 2. Upsert each of the exact 4 templates
+  // 2. Create exactly 5 templates from DEFAULT_TEMPLATES
   for (const tpl of DEFAULT_TEMPLATES) {
-    await prisma.template.upsert({
-      where: { slug: tpl.id },
-      update: {
-        title: tpl.title,
-        occasionType: tpl.occasion_type,
-        thumbnailUrl: tpl.thumbnail_url,
-        layoutConfig: tpl.layout_config as any,
-        isActive: true,
-      },
-      create: {
+    await prisma.template.create({
+      data: {
         slug: tpl.id,
         title: tpl.title,
         occasionType: tpl.occasion_type,

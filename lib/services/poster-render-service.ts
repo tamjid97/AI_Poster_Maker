@@ -661,7 +661,7 @@ async function generateElectionCampaignTemplate(poster: Poster): Promise<string>
   try {
     // Try to fetch SVG from the templates directory with timeout and retry
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const templateUrl = new URL('/templates/election-campaign.svg', baseUrl).href;
+    const templateUrl = new URL('/templates/template-3.svg', baseUrl).href;
     
     let response: Response | null = null;
     let lastError: Error | null = null;
@@ -738,10 +738,10 @@ async function generateElectionCampaignTemplate(poster: Poster): Promise<string>
     );
 
     if (mainPhoto) {
-      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-overlay"[^>]*\/>/s, '');
-      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-head"[^>]*\/>/s, '');
-      svgContent = svgContent.replace(/<path[^>]*id="photo-placeholder-body"[^>]*\/>/s, '');
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
       svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="600"[^>]*cy="585"[^>]*r="70"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 440 820 C 450 700 510 660 600 660 C 690 660 750 700 760 820 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const mainImageElement = `
       <image
@@ -752,7 +752,7 @@ async function generateElectionCampaignTemplate(poster: Poster): Promise<string>
         width="570"
         height="570"
         preserveAspectRatio="xMidYMid slice"
-        clip-path="url(#photo-clip-main)"
+        clip-path="url(#photo-clip-main-v3)"
       />`;
       
       svgContent = svgContent.replace(
@@ -762,8 +762,10 @@ async function generateElectionCampaignTemplate(poster: Poster): Promise<string>
     }
 
     if (secondPhoto) {
-      svgContent = svgContent.replace(/<circle[^>]*id="photo-placeholder-head-2"[^>]*\/>/s, '');
-      svgContent = svgContent.replace(/<path[^>]*id="photo-placeholder-body-2"[^>]*\/>/s, '');
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
+      svgContent = svgContent.replace(/<text[^>]*id="photo-2-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="180"[^>]*cy="1325"[^>]*r="25"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 135 1410 C 138 1370 155 1355 180 1355 C 205 1355 222 1370 225 1410 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const secondImageElement = `
       <image
@@ -774,7 +776,7 @@ async function generateElectionCampaignTemplate(poster: Poster): Promise<string>
         width="210"
         height="210"
         preserveAspectRatio="xMidYMid slice"
-        clip-path="url(#photo-clip-2)"
+        clip-path="url(#photo-clip-2-v3)"
       />`;
       
       svgContent = svgContent.replace(
@@ -2009,7 +2011,10 @@ async function generateVictoryDaySVGTemplate(poster: Poster): Promise<string> {
 
     // Inject main photo
     if (mainPhoto) {
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
       svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="600"[^>]*cy="585"[^>]*r="70"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 440 820 C 450 700 510 660 600 660 C 690 660 750 700 760 820 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const mainImageElement = `
       <image
@@ -2031,7 +2036,10 @@ async function generateVictoryDaySVGTemplate(poster: Poster): Promise<string> {
 
     // Inject second photo
     if (secondPhoto) {
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
       svgContent = svgContent.replace(/<text[^>]*id="photo-2-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="180"[^>]*cy="1325"[^>]*r="25"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 135 1410 C 138 1370 155 1355 180 1355 C 205 1355 222 1370 225 1410 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const secondImageElement = `
       <image
@@ -2132,7 +2140,10 @@ async function generateCondolenceSVGTemplate(poster: Poster): Promise<string> {
 
     // Inject main photo
     if (mainPhoto) {
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
       svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="600"[^>]*cy="585"[^>]*r="70"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 440 820 C 450 700 510 660 600 660 C 690 660 750 700 760 820 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const mainImageElement = `
       <image
@@ -2154,7 +2165,10 @@ async function generateCondolenceSVGTemplate(poster: Poster): Promise<string> {
 
     // Inject second photo
     if (secondPhoto) {
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
       svgContent = svgContent.replace(/<text[^>]*id="photo-2-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="180"[^>]*cy="1325"[^>]*r="25"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 135 1410 C 138 1370 155 1355 180 1355 C 205 1355 222 1370 225 1410 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const secondImageElement = `
       <image
@@ -2255,7 +2269,10 @@ async function generateEidGreetingSVGTemplate(poster: Poster): Promise<string> {
 
     // Inject main photo
     if (mainPhoto) {
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
       svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="600"[^>]*cy="585"[^>]*r="70"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 440 820 C 450 700 510 660 600 660 C 690 660 750 700 760 820 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const mainImageElement = `
       <image
@@ -2277,7 +2294,10 @@ async function generateEidGreetingSVGTemplate(poster: Poster): Promise<string> {
 
     // Inject second photo
     if (secondPhoto) {
+      // Remove placeholder elements: label, silhouette head, silhouette shoulders
       svgContent = svgContent.replace(/<text[^>]*id="photo-2-label"[^>]*>.*?<\/text>/s, '');
+      svgContent = svgContent.replace(/<circle[^>]*cx="180"[^>]*cy="1325"[^>]*r="25"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
+      svgContent = svgContent.replace(/<path[^>]*d="M 135 1410 C 138 1370 155 1355 180 1355 C 205 1355 222 1370 225 1410 Z"[^>]*fill="#[0-9A-Fa-f]{6}"[^>]*\/>/s, '');
 
       const secondImageElement = `
       <image
