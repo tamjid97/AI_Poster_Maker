@@ -1935,6 +1935,375 @@ async function generateEidMubarakV2Template(poster: Poster): Promise<string> {
   }
 }
 
+/**
+ * Victory Day SVG Template - fetches template-1.svg and injects dynamic content
+ */
+async function generateVictoryDaySVGTemplate(poster: Poster): Promise<string> {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || '';
+  const secondPhoto = photos[1] || '';
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const templateUrl = new URL('/templates/template-1.svg', baseUrl).href;
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        response = await fetch(templateUrl, { 
+          signal: controller.signal,
+          headers: { 'Accept': 'image/svg+xml' }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) break;
+        
+        lastError = new Error(`Template fetch failed with status: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown fetch error');
+        console.warn(`[VICTORY DAY TEMPLATE] Fetch attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
+    }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to fetch victory day template after 3 attempts: ${lastError?.message}`);
+    }
+    
+    let svgContent = await response.text();
+
+    // Inject dynamic content
+    svgContent = svgContent.replace(
+      /<text[^>]*id="headline-text"[^>]*>.*?<\/text>/s,
+      `<text id="headline-text" x="600" y="298" text-anchor="middle" fill="#FFF8D6" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="70" font-weight="800">${escapeHtml(poster.headline)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="name-text"[^>]*>.*?<\/text>/s,
+      `<text id="name-text" x="600" y="1025" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="72" font-weight="800">${escapeHtml(poster.name)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="designation-text"[^>]*>.*?<\/text>/s,
+      `<text id="designation-text" x="600" y="1115" text-anchor="middle" fill="#FCE582" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="38" font-weight="600">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="district-text"[^>]*>.*?<\/text>/s,
+      `<text id="district-text" x="600" y="1238" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="34" font-weight="600">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="footer-text"[^>]*>.*?<\/text>/s,
+      `<text id="footer-text" x="600" y="1565" text-anchor="middle" fill="#E2B842" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24" font-weight="600">প্রচারে: ${escapeHtml(poster.organization || '')}</text>`
+    );
+
+    // Inject main photo
+    if (mainPhoto) {
+      svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+
+      const mainImageElement = `
+      <image
+        id="photo-main-image"
+        href="${escapeHtml(mainPhoto)}"
+        x="315"
+        y="365"
+        width="570"
+        height="570"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-main-v1)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-main"[^>]*\/>/s,
+        mainImageElement
+      );
+    }
+
+    // Inject second photo
+    if (secondPhoto) {
+      svgContent = svgContent.replace(/<text[^>]*id="photo-2-label"[^>]*>.*?<\/text>/s, '');
+
+      const secondImageElement = `
+      <image
+        id="photo-2-image"
+        href="${escapeHtml(secondPhoto)}"
+        x="70"
+        y="1170"
+        width="210"
+        height="210"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-2-v1)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-2"[^>]*\/>/s,
+        secondImageElement
+      );
+    }
+
+    return svgContent;
+  } catch (error) {
+    console.error('[VICTORY DAY TEMPLATE] Error generating template:', error);
+    return generateVictoryDayTemplate(poster);
+  }
+}
+
+/**
+ * Condolence SVG Template - fetches template-2.svg and injects dynamic content
+ */
+async function generateCondolenceSVGTemplate(poster: Poster): Promise<string> {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || '';
+  const secondPhoto = photos[1] || '';
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const templateUrl = new URL('/templates/template-2.svg', baseUrl).href;
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        response = await fetch(templateUrl, { 
+          signal: controller.signal,
+          headers: { 'Accept': 'image/svg+xml' }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) break;
+        
+        lastError = new Error(`Template fetch failed with status: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown fetch error');
+        console.warn(`[CONDOLENCE TEMPLATE] Fetch attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
+    }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to fetch condolence template after 3 attempts: ${lastError?.message}`);
+    }
+    
+    let svgContent = await response.text();
+
+    // Inject dynamic content
+    svgContent = svgContent.replace(
+      /<text[^>]*id="headline-text"[^>]*>.*?<\/text>/s,
+      `<text id="headline-text" x="600" y="298" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="64" font-weight="800">${escapeHtml(poster.headline)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="name-text"[^>]*>.*?<\/text>/s,
+      `<text id="name-text" x="600" y="1025" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="72" font-weight="800">${escapeHtml(poster.name)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="designation-text"[^>]*>.*?<\/text>/s,
+      `<text id="designation-text" x="600" y="1115" text-anchor="middle" fill="#D1C097" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="38" font-weight="600">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="district-text"[^>]*>.*?<\/text>/s,
+      `<text id="district-text" x="600" y="1238" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="34" font-weight="600">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="footer-text"[^>]*>.*?<\/text>/s,
+      `<text id="footer-text" x="600" y="1565" text-anchor="middle" fill="#D1C097" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24" font-weight="600">শোকাহতে: ${escapeHtml(poster.organization || '')}</text>`
+    );
+
+    // Inject main photo
+    if (mainPhoto) {
+      svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+
+      const mainImageElement = `
+      <image
+        id="photo-main-image"
+        href="${escapeHtml(mainPhoto)}"
+        x="315"
+        y="365"
+        width="570"
+        height="570"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-main-v2)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-main"[^>]*\/>/s,
+        mainImageElement
+      );
+    }
+
+    // Inject second photo
+    if (secondPhoto) {
+      svgContent = svgContent.replace(/<text[^>]*id="photo-2-label"[^>]*>.*?<\/text>/s, '');
+
+      const secondImageElement = `
+      <image
+        id="photo-2-image"
+        href="${escapeHtml(secondPhoto)}"
+        x="70"
+        y="1170"
+        width="210"
+        height="210"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-2-v2)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-2"[^>]*\/>/s,
+        secondImageElement
+      );
+    }
+
+    return svgContent;
+  } catch (error) {
+    console.error('[CONDOLENCE TEMPLATE] Error generating template:', error);
+    return generateCondolenceTemplate(poster);
+  }
+}
+
+/**
+ * Eid Greeting SVG Template - fetches template-4.svg and injects dynamic content
+ */
+async function generateEidGreetingSVGTemplate(poster: Poster): Promise<string> {
+  const photos = poster.photo_urls || [];
+  const mainPhoto = photos[0] || '';
+  const secondPhoto = photos[1] || '';
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const templateUrl = new URL('/templates/template-4.svg', baseUrl).href;
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        response = await fetch(templateUrl, { 
+          signal: controller.signal,
+          headers: { 'Accept': 'image/svg+xml' }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) break;
+        
+        lastError = new Error(`Template fetch failed with status: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown fetch error');
+        console.warn(`[EID GREETING TEMPLATE] Fetch attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
+    }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to fetch eid greeting template after 3 attempts: ${lastError?.message}`);
+    }
+    
+    let svgContent = await response.text();
+
+    // Inject dynamic content
+    svgContent = svgContent.replace(
+      /<text[^>]*id="headline-text"[^>]*>.*?<\/text>/s,
+      `<text id="headline-text" x="600" y="298" text-anchor="middle" fill="#FFEAA7" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="74" font-weight="800">${escapeHtml(poster.headline)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="name-text"[^>]*>.*?<\/text>/s,
+      `<text id="name-text" x="600" y="1025" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="72" font-weight="800">${escapeHtml(poster.name)}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="designation-text"[^>]*>.*?<\/text>/s,
+      `<text id="designation-text" x="600" y="1115" text-anchor="middle" fill="#FFEAA7" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="38" font-weight="600">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="district-text"[^>]*>.*?<\/text>/s,
+      `<text id="district-text" x="600" y="1238" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="34" font-weight="600">${escapeHtml([poster.union_or_thana, poster.district].filter(Boolean).join(', ') || '')}</text>`
+    );
+
+    svgContent = svgContent.replace(
+      /<text[^>]*id="footer-text"[^>]*>.*?<\/text>/s,
+      `<text id="footer-text" x="600" y="1565" text-anchor="middle" fill="#EBB634" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24" font-weight="600">শুভেচ্ছান্তে: ${escapeHtml(poster.organization || '')}</text>`
+    );
+
+    // Inject main photo
+    if (mainPhoto) {
+      svgContent = svgContent.replace(/<text[^>]*id="photo-placeholder-label"[^>]*>.*?<\/text>/s, '');
+
+      const mainImageElement = `
+      <image
+        id="photo-main-image"
+        href="${escapeHtml(mainPhoto)}"
+        x="315"
+        y="365"
+        width="570"
+        height="570"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-main-v4)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-main"[^>]*\/>/s,
+        mainImageElement
+      );
+    }
+
+    // Inject second photo
+    if (secondPhoto) {
+      svgContent = svgContent.replace(/<text[^>]*id="photo-2-label"[^>]*>.*?<\/text>/s, '');
+
+      const secondImageElement = `
+      <image
+        id="photo-2-image"
+        href="${escapeHtml(secondPhoto)}"
+        x="70"
+        y="1170"
+        width="210"
+        height="210"
+        preserveAspectRatio="xMidYMid slice"
+        clip-path="url(#photo-clip-2-v4)"
+      />`;
+      
+      svgContent = svgContent.replace(
+        /<circle[^>]*id="photo-slot-2"[^>]*\/>/s,
+        secondImageElement
+      );
+    }
+
+    return svgContent;
+  } catch (error) {
+    console.error('[EID GREETING TEMPLATE] Error generating template:', error);
+    return generateEidRamadanTemplate(poster);
+  }
+}
+
 export async function generatePosterHTML(
   poster: Poster,
   _layout?: LayoutSuggestion,
@@ -1942,56 +2311,41 @@ export async function generatePosterHTML(
 ): Promise<string> {
   try {
     const resolved = resolveTemplate(poster, template);
-    const occasionType = resolved?.occasion_type || poster.occasion;
     const templateId = resolved?.id || '';
 
     console.log('========================================');
-    console.log('[POSTER RENDER] Generating poster for occasion:', occasionType);
-    console.log('[POSTER RENDER] Resolved template ID:', resolved?.id);
+    console.log('[POSTER RENDER] Generating poster for templateId:', templateId);
     console.log('[POSTER RENDER] Poster name:', poster.name);
     console.log('[POSTER RENDER] Poster headline:', poster.headline);
     console.log('[POSTER RENDER] Photo URLs:', poster.photo_urls);
     console.log('========================================');
 
-    // Check for specific template ID first
-    if (templateId === 'tpl-eid-mobarak-v2') {
-      console.log('[POSTER RENDER] Using Eid Mubarak V2 template (custom SVG with leader photos)');
-      return await generateEidMubarakV2Template(poster);
-    }
-
-    if (templateId === 'tpl-leadership-poster') {
-      console.log('[POSTER RENDER] Using Leadership poster template (custom SVG with 2 photo slots)');
-      return await generateLeadershipPosterTemplate(poster);
-    }
-
-    switch (occasionType) {
-      case 'victory_day':
-        console.log('[POSTER RENDER] Using Victory Day template');
-        return generateVictoryDayTemplate(poster);
-      case 'condolence':
-        console.log('[POSTER RENDER] Using Condolence template');
-        return generateCondolenceTemplate(poster);
-      case 'political_campaign':
-        console.log('[POSTER RENDER] Using Election Campaign template (SVG-based)');
+    // Route by template ID instead of occasion type
+    switch (templateId) {
+      case 'tpl-victory-day':
+        console.log('[POSTER RENDER] Using Victory Day SVG template');
+        return await generateVictoryDaySVGTemplate(poster);
+      case 'tpl-condolence':
+        console.log('[POSTER RENDER] Using Condolence SVG template');
+        return await generateCondolenceSVGTemplate(poster);
+      case 'tpl-election-campaign':
+        console.log('[POSTER RENDER] Using Election Campaign SVG template');
         return await generateElectionCampaignTemplate(poster);
-      case 'eid_greeting':
-        console.log('[POSTER RENDER] Using Eid/Ramadan template');
-        return generateEidRamadanTemplate(poster);
-      case 'eid_mubarak':
+      case 'tpl-eid-greeting':
+        console.log('[POSTER RENDER] Using Eid Greeting SVG template');
+        return await generateEidGreetingSVGTemplate(poster);
+      case 'tpl-eid-mobarak-v2':
+        console.log('[POSTER RENDER] Using Eid Mubarak V2 template (custom SVG with leader photos)');
+        return await generateEidMubarakV2Template(poster);
+      case 'tpl-leadership-poster':
+        console.log('[POSTER RENDER] Using Leadership poster template (custom SVG with 2 photo slots)');
+        return await generateLeadershipPosterTemplate(poster);
+      case 'tpl-eid-mubarak':
         console.log('[POSTER RENDER] Using Eid Mubarak template (SVG-based)');
         return await generateEidMubarakTemplate(poster);
-      case 'greeting':
-        console.log('[POSTER RENDER] Using Greeting template');
-        return generateGreetingTemplate(poster);
-      case 'leadership':
-        console.log('[POSTER RENDER] Using Leadership poster template (custom SVG)');
-        return await generateLeadershipPosterTemplate(poster);
-      case 'tribute':
-        console.log('[POSTER RENDER] Using Tribute template (fallback to Greeting)');
-        return generateGreetingTemplate(poster);
       default:
-        console.warn('[POSTER RENDER] Unknown occasion type:', occasionType, 'falling back to election_campaign');
-        return await generateElectionCampaignTemplate(poster);
+        console.warn('[POSTER RENDER] Unknown template ID:', templateId, 'falling back to Victory Day');
+        return await generateVictoryDaySVGTemplate(poster);
     }
   } catch (error) {
     console.error('[POSTER RENDER] Error generating poster, using fallback:', error);
