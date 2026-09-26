@@ -39,6 +39,7 @@ export default function LoginPage() {
     formState: { errors },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
+    mode: 'onChange', // Enable real-time validation as user types
   });
 
   const onSubmit = async (data: LoginValues) => {
