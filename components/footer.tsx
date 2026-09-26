@@ -1,7 +1,11 @@
+'use client';
+
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
+import { useLanguage } from '@/providers/language-provider';
 
 export function Footer() {
+  const { t } = useLanguage();
   return (
     <footer className="border-t border-border/40 bg-card/30">
       <div className="container mx-auto px-4 py-12">
@@ -16,43 +20,42 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-4 max-w-md text-sm text-muted-foreground">
-              Create ready-to-print Bangladeshi political, social, cultural, greeting,
-              tribute, and festival posters with AI-assisted layout generation.
+              {t('footer.description')}
             </p>
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Product</h3>
+            <h3 className="mb-4 text-sm font-semibold">{t('footer.product')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link href="/templates" className="transition-colors hover:text-foreground">
-                  Templates
+                  {t('nav.templates')}
                 </Link>
               </li>
               <li>
                 <Link href="/create-poster" className="transition-colors hover:text-foreground">
-                  Create Poster
+                  {t('nav.createPoster')}
                 </Link>
               </li>
               <li>
                 <Link href="/dashboard" className="transition-colors hover:text-foreground">
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h3 className="mb-4 text-sm font-semibold">Account</h3>
+            <h3 className="mb-4 text-sm font-semibold">{t('footer.account')}</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link href="/login" className="transition-colors hover:text-foreground">
-                  Sign In
+                  {t('nav.signIn')}
                 </Link>
               </li>
               <li>
                 <Link href="/register" className="transition-colors hover:text-foreground">
-                  Create Account
+                  {t('auth.signUp')}
                 </Link>
               </li>
             </ul>
@@ -60,7 +63,7 @@ export function Footer() {
         </div>
 
         <div className="mt-8 border-t border-border/40 pt-8 text-center text-sm text-muted-foreground">
-          <p>&copy; {new Date().getFullYear()} PosterAI. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} PosterAI. {t('footer.copyright')}</p>
         </div>
       </div>
     </footer>

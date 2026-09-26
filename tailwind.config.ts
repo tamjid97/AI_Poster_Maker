@@ -13,6 +13,9 @@ const config: Config = {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         bengali: ['var(--font-bengali)', 'Noto Sans Bengali', 'sans-serif'],
       },
+      transitionDuration: {
+        '400': '400ms',
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -94,6 +97,22 @@ const config: Config = {
         'shimmer': {
           '100%': { transform: 'translateX(100%)' },
         },
+        'slide-up': {
+          from: { opacity: '0', transform: 'translateY(20px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'slide-down': {
+          from: { opacity: '0', transform: 'translateY(-20px)' },
+          to: { opacity: '1', transform: 'translateY(0)' },
+        },
+        'scale-in': {
+          from: { opacity: '0', transform: 'scale(0.9)' },
+          to: { opacity: '1', transform: 'scale(1)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -101,6 +120,10 @@ const config: Config = {
         'fade-in': 'fade-in 0.5s ease-out forwards',
         'fade-in-scale': 'fade-in-scale 0.4s ease-out forwards',
         'shimmer': 'shimmer 2s infinite',
+        'slide-up': 'slide-up 0.4s ease-out forwards',
+        'slide-down': 'slide-down 0.4s ease-out forwards',
+        'scale-in': 'scale-in 0.3s ease-out forwards',
+        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
       },
     },
   },

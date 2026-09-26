@@ -18,6 +18,7 @@ import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { AuthGuard } from '@/hooks/use-require-auth';
 import { useAuth } from '@/providers/auth-provider';
+import { useLanguage } from '@/providers/language-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -67,6 +68,7 @@ function StatusBadge({ status }: { status: PosterStatus }) {
 
 function DashboardContent() {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [posters, setPosters] = useState<Poster[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -100,23 +102,23 @@ function DashboardContent() {
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">
-                Welcome back, {user?.name || 'User'}
+                {t('dashboard.welcome')}, {user?.name || 'User'}
               </h1>
               <p className="mt-1 text-muted-foreground">
-                Manage your posters and create new ones.
+                {t('dashboard.subtitle')}
               </p>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="btn-hover">
                 <Link href="/templates">
                   <LayoutIcon className="mr-2 h-4 w-4" />
-                  Browse Templates
+                  {t('nav.browseTemplates')}
                 </Link>
               </Button>
-              <Button asChild>
+              <Button asChild className="btn-hover">
                 <Link href="/create-poster">
                   <Plus className="mr-2 h-4 w-4" />
-                  Create Poster
+                  {t('nav.createPoster')}
                 </Link>
               </Button>
             </div>
@@ -124,26 +126,28 @@ function DashboardContent() {
 
           {/* Stats */}
           <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard icon={FileImage} label="Total Posters" value={stats.total} color="bg-primary/10 text-primary" />
-            <StatCard icon={CheckCircle2} label="Completed" value={stats.completed} color="bg-success/10 text-success" />
-            <StatCard icon={Loader2} label="Generating" value={stats.generating} color="bg-warning/10 text-warning" />
-            <StatCard icon={XCircle} label="Failed" value={stats.failed} color="bg-destructive/10 text-destructive" />
+            <StatCard icon={FileImage} label={t('dashboard.totalPosters')} value={stats.total} color="bg-primary/10 text-primary" />
+            <StatCard icon={CheckCircle2} label={t('dashboard.completed')} value={stats.completed} color="bg-success/10 text-success" />
+            <StatCard icon={Loader2} label={t('dashboard.generating')} value={stats.generating} color="bg-warning/10 text-warning" />
+            <StatCard icon={XCircle} label={t('dashboard.failed')} value={stats.failed} color="bg-destructive/10 text-destructive" />
           </div>
 
           {/* Recent Posters */}
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Recent Posters</h2>
+            <h2 className="text-xl font-semibold">{t('dashboard.recentPosters')}</h2>
             {posters.length > 0 && (
               <Link href="/posters" className="flex items-center gap-1 text-sm text-primary hover:underline">
-                View all
+                {t('dashboard.viewAll')}
                 <ArrowRight className="h-3 w-3" />
               </Link>
             )}
           </div>
 
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-80 rounded-lg bg-muted animate-pulse" />
+              ))}
             </div>
           ) : posters.length === 0 ? (
             <Card className="border-dashed">
@@ -151,14 +155,14 @@ function DashboardContent() {
                 <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                   <ImageIcon className="h-8 w-8 text-muted-foreground" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold">No posters yet</h3>
+                <h3 className="mb-2 text-lg font-semibold">{t('dashboard.noPosters')}</h3>
                 <p className="mb-4 max-w-sm text-sm text-muted-foreground">
-                  You haven&apos;t created any posters yet. Get started by creating your first poster.
+                  {t('dashboard.noPostersDesc')}
                 </p>
-                <Button asChild>
+                <Button asChild className="btn-hover">
                   <Link href="/create-poster">
                     <Plus className="mr-2 h-4 w-4" />
-                    Create Your First Poster
+                    {t('dashboard.createFirst')}
                   </Link>
                 </Button>
               </CardContent>
@@ -172,9 +176,15 @@ function DashboardContent() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3, delay: i * 0.05 }}
                 >
-                  <Card className="group overflow-hidden transition-shadow hover:shadow-lg">
+                  <Card className="group overflow-hidden card-hover">
                     <div className="aspect-[3/4] overflow-hidden bg-muted">
-                      {poster.photo_urls[0] ? (
+                      {poster.generated_image_url ? (
+                        <img
+                          src={poster.generated_image_url}
+                          alt={poster.headline}
+                          className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                        />
+                      ) : poster.photo_urls[0] ? (
                         <img
                           src={poster.photo_urls[0]}
                           alt={poster.headline}

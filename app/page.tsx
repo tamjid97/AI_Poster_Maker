@@ -17,74 +17,79 @@ import {
 } from 'lucide-react';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { useLanguage } from '@/providers/language-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-const features = [
-  {
-    icon: Wand2,
-    title: 'AI-Powered Layouts',
-    description: 'Gemini AI suggests professional layouts, color palettes, and typography for your posters.',
-  },
-  {
-    icon: Layout,
-    title: 'Template Library',
-    description: 'Pre-designed templates for Victory Day, Eid, condolence, campaigns, and more.',
-  },
-  {
-    icon: ImageIcon,
-    title: 'Photo Upload',
-    description: 'Upload up to 3 photos with automatic preview and secure Cloudinary storage.',
-  },
-  {
-    icon: Download,
-    title: 'High-Resolution Export',
-    description: 'Download print-ready posters at 1200x1600 with proper Bangla font rendering.',
-  },
-  {
-    icon: Palette,
-    title: 'Bangla & English',
-    description: 'Full Unicode Bangla text support with Noto Sans Bengali font for accurate rendering.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Secure & Private',
-    description: 'JWT authentication, password hashing, and user-scoped poster access.',
-  },
-];
-
-const categories = [
-  { label: 'Victory Day', icon: '🇧🇩', color: 'from-green-600 to-red-500' },
-  { label: 'Eid Greeting', icon: '🌙', color: 'from-green-700 to-yellow-500' },
-  { label: 'Condolence / Tribute', icon: '🕯', color: 'from-gray-700 to-gray-900' },
-  { label: 'Political Campaign', icon: '📢', color: 'from-blue-700 to-blue-500' },
-];
-
-const steps = [
-  {
-    icon: FileImage,
-    title: 'Choose a Template',
-    description: 'Browse our library of professionally designed templates for any occasion.',
-  },
-  {
-    icon: ImageIcon,
-    title: 'Add Your Details',
-    description: 'Enter your name, designation, party, organization, and upload photos.',
-  },
-  {
-    icon: Wand2,
-    title: 'AI Generates Layout',
-    description: 'Gemini AI suggests the perfect layout, colors, and typography for your poster.',
-  },
-  {
-    icon: Download,
-    title: 'Download & Print',
-    description: 'Preview your poster, regenerate if needed, and download in high resolution.',
-  },
-];
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export default function Home() {
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: Wand2,
+      title: t('home.features.aiLayouts.title'),
+      description: t('home.features.aiLayouts.description'),
+    },
+    {
+      icon: Layout,
+      title: t('home.features.templateLibrary.title'),
+      description: t('home.features.templateLibrary.description'),
+    },
+    {
+      icon: ImageIcon,
+      title: t('home.features.photoUpload.title'),
+      description: t('home.features.photoUpload.description'),
+    },
+    {
+      icon: Download,
+      title: t('home.features.highResExport.title'),
+      description: t('home.features.highResExport.description'),
+    },
+    {
+      icon: Palette,
+      title: t('home.features.banglaEnglish.title'),
+      description: t('home.features.banglaEnglish.description'),
+    },
+    {
+      icon: ShieldCheck,
+      title: t('home.features.securePrivate.title'),
+      description: t('home.features.securePrivate.description'),
+    },
+  ];
+
+  const categories = [
+    { label: t('home.categories.victoryDay'), icon: '🇧🇩', color: 'from-green-600 to-red-500' },
+    { label: t('home.categories.eidGreeting'), icon: '🌙', color: 'from-green-700 to-yellow-500' },
+    { label: t('home.categories.condolence'), icon: '🕯', color: 'from-gray-700 to-gray-900' },
+    { label: t('home.categories.politicalCampaign'), icon: '📢', color: 'from-blue-700 to-blue-500' },
+  ];
+
+  const steps = [
+    {
+      icon: FileImage,
+      title: t('home.howItWorks.step1.title'),
+      description: t('home.howItWorks.step1.description'),
+    },
+    {
+      icon: ImageIcon,
+      title: t('home.howItWorks.step2.title'),
+      description: t('home.howItWorks.step2.description'),
+    },
+    {
+      icon: Wand2,
+      title: t('home.howItWorks.step3.title'),
+      description: t('home.howItWorks.step3.description'),
+    },
+    {
+      icon: Download,
+      title: t('home.howItWorks.step4.title'),
+      description: t('home.howItWorks.step4.description'),
+    },
+  ];
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -102,43 +107,39 @@ export default function Home() {
           >
             <Badge variant="secondary" className="mb-6 gap-1.5 px-4 py-1.5 text-sm">
               <Sparkles className="h-3.5 w-3.5" />
-              AI-Powered Poster Generation
+              {t('home.hero.badge')}
             </Badge>
             <h1 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
-              Create stunning{' '}
-              <span className="gradient-text">Bangladeshi political posters</span>{' '}
-              in minutes
+              {t('home.hero.title')}
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground md:text-xl">
-              PosterAI uses AI to generate professional, print-ready posters for
-              political campaigns, social events, greetings, tributes, and festivals.
-              Just enter your details and let AI handle the design.
+              {t('home.hero.subtitle')}
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button size="lg" className="h-12 gap-2 px-8 text-base" asChild>
+              <Button size="lg" className="h-12 gap-2 px-8 text-base btn-hover" asChild>
                 <Link href="/create-poster">
-                  Create Poster
+                  {t('home.hero.createPoster')}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-12 gap-2 px-8 text-base" asChild>
+              <Button size="lg" variant="outline" className="h-12 gap-2 px-8 text-base btn-hover" asChild>
                 <Link href="/templates">
-                  Browse Templates
+                  {t('home.hero.browseTemplates')}
                 </Link>
               </Button>
             </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-success" />
-                No design skills needed
+                {t('home.hero.noDesignSkills')}
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-success" />
-                Bangla font support
+                {t('home.hero.banglaFontSupport')}
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-4 w-4 text-success" />
-                Print-ready output
+                {t('home.hero.printReady')}
               </div>
             </div>
           </motion.div>
@@ -149,10 +150,10 @@ export default function Home() {
       <section className="container mx-auto px-4 py-20">
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-            Everything you need to create professional posters
+            {t('home.features.title')}
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Powerful features designed for Bangladeshi political and social poster creation.
+            {t('home.features.subtitle')}
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -164,7 +165,7 @@ export default function Home() {
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
             >
-              <Card className="h-full transition-shadow hover:shadow-lg">
+              <Card className="h-full card-hover">
                 <CardHeader>
                   <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
                     <feature.icon className="h-6 w-6 text-primary" />
@@ -187,10 +188,10 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="mx-auto mb-12 max-w-2xl text-center">
             <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Supported poster categories
+              {t('home.categories.title')}
             </h2>
             <p className="mt-4 text-muted-foreground">
-              From political campaigns to festival greetings, we&apos;ve got you covered.
+              {t('home.categories.subtitle')}
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -202,7 +203,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
               >
-                <div className="group relative overflow-hidden rounded-xl border border-border/40 bg-card p-6 text-center transition-all hover:border-primary/50 hover:shadow-lg">
+                <div className="group relative overflow-hidden rounded-xl border border-border/40 bg-card p-6 text-center card-hover hover:border-primary/50">
                   <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 transition-opacity group-hover:opacity-10`} />
                   <div className="relative">
                     <div className="mb-3 text-4xl">{category.icon}</div>
@@ -220,13 +221,13 @@ export default function Home() {
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <Badge variant="secondary" className="mb-4 gap-1.5">
             <Zap className="h-3.5 w-3.5" />
-            Simple Process
+            {t('home.howItWorks.badge')}
           </Badge>
           <h2 className="text-3xl font-bold tracking-tight md:text-4xl">
-            How it works
+            {t('home.howItWorks.title')}
           </h2>
           <p className="mt-4 text-muted-foreground">
-            Create your poster in four simple steps.
+            {t('home.howItWorks.subtitle')}
           </p>
         </div>
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -259,21 +260,21 @@ export default function Home() {
           <div className="absolute inset-0 bg-grid opacity-10" />
           <div className="relative">
             <h2 className="text-3xl font-bold tracking-tight text-white md:text-4xl">
-              Ready to create your poster?
+              {t('home.cta.title')}
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-lg text-white/80">
-              Join PosterAI today and start creating professional posters in minutes.
+              {t('home.cta.subtitle')}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button size="lg" variant="secondary" className="h-12 px-8 text-base" asChild>
+              <Button size="lg" variant="secondary" className="h-12 px-8 text-base btn-hover" asChild>
                 <Link href="/register">
-                  Get Started Free
+                  {t('home.cta.getStarted')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-12 border-white/30 px-8 text-base text-white hover:bg-white/10 hover:text-white" asChild>
+              <Button size="lg" variant="outline" className="h-12 border-white/30 px-8 text-base text-white hover:bg-white/10 hover:text-white btn-hover" asChild>
                 <Link href="/templates">
-                  Browse Templates
+                  {t('home.cta.browseTemplates')}
                 </Link>
               </Button>
             </div>

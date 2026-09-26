@@ -22,12 +22,14 @@ import {
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
 import { AuthGuard } from '@/hooks/use-require-auth';
+import { useLanguage } from '@/providers/language-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TemplateThumbnail } from '@/components/template-thumbnail';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
@@ -56,6 +58,7 @@ const STEPS = [
 ];
 
 function CreatePosterContent() {
+  const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [step, setStep] = useState(1);
@@ -242,9 +245,9 @@ function CreatePosterContent() {
           transition={{ duration: 0.3 }}
         >
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-bold tracking-tight">Create a Poster</h1>
+            <h1 className="text-3xl font-bold tracking-tight">{t('createPoster.title')}</h1>
             <p className="mt-2 text-muted-foreground">
-              Fill in the details below and let AI generate your poster.
+              {t('createPoster.subtitle')}
             </p>
           </div>
 
@@ -448,7 +451,11 @@ function CreatePosterContent() {
                               >
                                 <div className="aspect-[3/4] overflow-hidden bg-muted">
                                   {template.thumbnail_url && (
-                                    <img src={template.thumbnail_url} alt={template.title} className="h-full w-full object-cover" />
+                                    <TemplateThumbnail 
+                                      thumbnailUrl={template.thumbnail_url} 
+                                      title={template.title} 
+                                      className="h-full w-full"
+                                    />
                                   )}
                                 </div>
                                 <div className="p-2">

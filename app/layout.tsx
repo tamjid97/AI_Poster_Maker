@@ -2,6 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter, Noto_Sans_Bengali } from 'next/font/google';
 import { ThemeProvider } from '@/providers/theme-provider';
+import { ThemeColorProvider } from '@/providers/theme-color-provider';
+import { LanguageProvider } from '@/providers/language-provider';
 import { AuthProvider } from '@/providers/auth-provider';
 import { Toaster } from '@/components/ui/sonner';
 
@@ -43,12 +45,15 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="dark"
           enableSystem
-          disableTransitionOnChange
         >
-          <AuthProvider>
-            {children}
-            <Toaster richColors closeButton />
-          </AuthProvider>
+          <ThemeColorProvider>
+            <LanguageProvider>
+              <AuthProvider>
+                {children}
+                <Toaster richColors closeButton />
+              </AuthProvider>
+            </LanguageProvider>
+          </ThemeColorProvider>
         </ThemeProvider>
       </body>
     </html>

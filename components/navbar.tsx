@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
-import { Moon, Sun, Sparkles, Menu, X } from 'lucide-react';
+import { Moon, Sun, Sparkles, Menu, X, Palette, Globe, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useAuth } from '@/providers/auth-provider';
+import { useThemeColor } from '@/providers/theme-color-provider';
+import { useLanguage } from '@/providers/language-provider';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -13,13 +15,27 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from '@/components/ui/dropdown-menu';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
 export function Navbar() {
   const { theme, setTheme } = useTheme();
   const { user, signOut } = useAuth();
+  const { accentColor, setAccentColor } = useThemeColor();
+  const { language, setLanguage, t } = useLanguage();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [colorOpen, setColorOpen] = useState(false);
+
+  const colorSwatches = [
+    { color: 'deep-green', bg: 'bg-green-600', label: 'Deep Green' },
+    { color: 'maroon', bg: 'bg-red-800', label: 'Maroon' },
+    { color: 'gold', bg: 'bg-amber-500', label: 'Gold' },
+    { color: 'royal-blue', bg: 'bg-blue-600', label: 'Royal Blue' },
+    { color: 'charcoal', bg: 'bg-gray-700', label: 'Charcoal' },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 glass">
@@ -38,13 +54,13 @@ export function Navbar() {
             href="/"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            Home
+            {t('nav.home')}
           </Link>
           <Link
             href="/templates"
             className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
           >
-            Templates
+            {t('nav.templates')}
           </Link>
           {user && (
             <>
@@ -52,19 +68,65 @@ export function Navbar() {
                 href="/dashboard"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                Dashboard
+                {t('nav.dashboard')}
               </Link>
               <Link
                 href="/create-poster"
                 className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
               >
-                Create Poster
+                {t('nav.createPoster')}
               </Link>
             </>
           )}
         </nav>
 
         <div className="flex items-center gap-2">
+          {/* Color Switcher */}
+          <Popover open={colorOpen} onOpenChange={setColorOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9"
+                title="Change accent color"
+              >
+                <Palette className="h-4 w-4" />
+                <span className="sr-only">Change accent color</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-3" align="end">
+              <div className="grid grid-cols-5 gap-2">
+                {colorSwatches.map((swatch) => (
+                  <button
+                    key={swatch.color}
+                    onClick={() => setAccentColor(swatch.color as any)}
+                    className={cn(
+                      'color-swatch h-8 w-8 rounded-full border-2 transition-all',
+                      swatch.bg,
+                      accentColor === swatch.color
+                        ? 'border-foreground scale-110 ring-2 ring-offset-2 ring-offset-background'
+                        : 'border-transparent hover:border-foreground/50'
+                    )}
+                    title={swatch.label}
+                  />
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* Language Toggle */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLanguage(language === 'bn' ? 'en' : 'bn')}
+            className="lang-switch h-9 px-3 gap-1.5"
+            title="Switch language"
+          >
+            <Globe className="h-4 w-4" />
+            <span className="text-sm font-medium">{language === 'bn' ? 'বাং' : 'EN'}</span>
+          </Button>
+
+          {/* Theme Toggle */}
           <Button
             variant="ghost"
             size="icon"
@@ -90,27 +152,27 @@ export function Navbar() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link href="/dashboard">{t('nav.dashboard')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/create-poster">Create Poster</Link>
+                  <Link href="/create-poster">{t('nav.createPoster')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/templates">Browse Templates</Link>
+                  <Link href="/templates">{t('nav.browseTemplates')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => signOut()} className="text-destructive">
-                  Sign Out
+                  {t('nav.signOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
             <div className="hidden items-center gap-2 md:flex">
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/login">Sign In</Link>
+                <Link href="/login">{t('nav.signIn')}</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link href="/register">Get Started</Link>
+                <Link href="/register">{t('auth.signUp')}</Link>
               </Button>
             </div>
           )}
@@ -130,30 +192,30 @@ export function Navbar() {
         <div className="border-t border-border/40 md:hidden">
           <nav className="container mx-auto flex flex-col gap-1 px-4 py-4">
             <Link href="/" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
-              Home
+              {t('nav.home')}
             </Link>
             <Link href="/templates" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
-              Templates
+              {t('nav.templates')}
             </Link>
             {user ? (
               <>
                 <Link href="/dashboard" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
-                  Dashboard
+                  {t('nav.dashboard')}
                 </Link>
                 <Link href="/create-poster" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
-                  Create Poster
+                  {t('nav.createPoster')}
                 </Link>
                 <button onClick={() => { signOut(); setMobileOpen(false); }} className="rounded-md px-3 py-2 text-left text-sm font-medium text-destructive hover:bg-muted">
-                  Sign Out
+                  {t('nav.signOut')}
                 </button>
               </>
             ) : (
               <>
                 <Link href="/login" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
-                  Sign In
+                  {t('nav.signIn')}
                 </Link>
                 <Link href="/register" className="rounded-md px-3 py-2 text-sm font-medium hover:bg-muted" onClick={() => setMobileOpen(false)}>
-                  Get Started
+                  {t('auth.signUp')}
                 </Link>
               </>
             )}

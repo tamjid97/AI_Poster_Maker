@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Search, Layout as LayoutIcon, Loader2, ArrowRight } from 'lucide-react';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { useLanguage } from '@/providers/language-provider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,7 +15,11 @@ import { fetchTemplates } from '@/lib/api';
 import type { Template } from '@/types';
 import { OCCASION_LABELS, OCCASION_OPTIONS } from '@/types';
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default function TemplatesPage() {
+  const { t } = useLanguage();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -48,10 +53,10 @@ export default function TemplatesPage() {
         >
           <div className="mb-8 text-center">
             <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
-              Template Library
+              {t('templates.title')}
             </h1>
             <p className="mt-2 text-muted-foreground">
-              Choose from our collection of professionally designed poster templates.
+              {t('templates.subtitle')}
             </p>
           </div>
 
@@ -60,8 +65,8 @@ export default function TemplatesPage() {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
-                placeholder="Search templates..."
-                className="pl-9"
+                placeholder={t('templates.searchPlaceholder')}
+                className="pl-9 input-focus"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -71,8 +76,9 @@ export default function TemplatesPage() {
                 size="sm"
                 variant={occasion === '' ? 'default' : 'outline'}
                 onClick={() => setOccasion('')}
+                className="btn-hover"
               >
-                All
+                {t('templates.all')}
               </Button>
               {OCCASION_OPTIONS.map((opt) => (
                 <Button
@@ -80,6 +86,7 @@ export default function TemplatesPage() {
                   size="sm"
                   variant={occasion === opt.value ? 'default' : 'outline'}
                   onClick={() => setOccasion(opt.value)}
+                  className="btn-hover"
                 >
                   {opt.label}
                 </Button>
@@ -89,15 +96,17 @@ export default function TemplatesPage() {
 
           {/* Templates Grid */}
           {loading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-64 rounded-lg bg-muted animate-pulse" />
+              ))}
             </div>
           ) : templates.length === 0 ? (
             <Card className="border-dashed">
               <CardContent className="flex flex-col items-center justify-center py-16 text-center">
                 <LayoutIcon className="mb-4 h-12 w-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-semibold">No templates found</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="mb-2 text-lg font-semibold">{t('templates.noTemplates')}</h3>
+                <p className="text-sm text-muted-foreground">{t('templates.tryDifferent')}
                   Try adjusting your search or filters.
                 </p>
               </CardContent>

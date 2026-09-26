@@ -9,11 +9,16 @@ import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Sparkles, Mail, Lock, Loader2 } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
+import { useLanguage } from '@/providers/language-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { PasswordInput } from '@/components/password-input';
 import { toast } from 'sonner';
+
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
@@ -24,6 +29,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const { signIn } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -42,7 +48,7 @@ export default function LoginPage() {
       toast.error(error);
       setLoading(false);
     } else {
-      toast.success('Welcome back!');
+      toast.success(t('auth.welcomeBack'));
       router.push('/dashboard');
     }
   };
@@ -66,19 +72,19 @@ export default function LoginPage() {
                 Poster<span className="gradient-text">AI</span>
               </span>
             </Link>
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
-            <CardDescription>Sign in to your account to continue</CardDescription>
+            <CardTitle className="text-2xl">{t('auth.welcomeBack')}</CardTitle>
+            <CardDescription>{t('auth.signInDesc')}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('auth.email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder={t('auth.emailPlaceholder')}
                     className="pl-9"
                     {...register('email')}
                   />
@@ -88,13 +94,12 @@ export default function LoginPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
+                  <PasswordInput
                     id="password"
-                    type="password"
-                    placeholder="••••••••"
+                    placeholder={t('auth.passwordPlaceholder')}
                     className="pl-9"
                     {...register('password')}
                   />
@@ -109,16 +114,16 @@ export default function LoginPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    {t('auth.signingIn')}
                   </>
                 ) : (
-                  'Sign In'
+                  t('auth.signIn')
                 )}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
-                Don&apos;t have an account?{' '}
+                {t('auth.noAccount')}{' '}
                 <Link href="/register" className="font-medium text-primary hover:underline">
-                  Sign up
+                  {t('auth.signUpLink')}
                 </Link>
               </p>
             </CardFooter>

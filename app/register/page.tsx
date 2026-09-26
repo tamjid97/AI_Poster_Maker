@@ -9,11 +9,16 @@ import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Sparkles, Mail, Lock, User, Loader2 } from 'lucide-react';
 import { useAuth } from '@/providers/auth-provider';
+import { useLanguage } from '@/providers/language-provider';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { PasswordInput } from '@/components/password-input';
 import { toast } from 'sonner';
+
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const registerSchema = z
   .object({
@@ -31,6 +36,7 @@ type RegisterValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const { signUp } = useAuth();
+  const { t } = useLanguage();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -49,7 +55,7 @@ export default function RegisterPage() {
       toast.error(error);
       setLoading(false);
     } else {
-      toast.success('Account created successfully!');
+      toast.success(t('common.success'));
       router.push('/dashboard');
     }
   };
@@ -73,19 +79,19 @@ export default function RegisterPage() {
                 Poster<span className="gradient-text">AI</span>
               </span>
             </Link>
-            <CardTitle className="text-2xl">Create your account</CardTitle>
-            <CardDescription>Start creating professional posters today</CardDescription>
+            <CardTitle className="text-2xl">{t('auth.createAccount')}</CardTitle>
+            <CardDescription>{t('auth.createAccountDesc')}</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name">{t('auth.fullName')}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="name"
                     type="text"
-                    placeholder="John Doe"
+                    placeholder={t('auth.fullNamePlaceholder')}
                     className="pl-9"
                     {...register('name')}
                   />
@@ -95,13 +101,13 @@ export default function RegisterPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('auth.email')}</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder={t('auth.emailPlaceholder')}
                     className="pl-9"
                     {...register('email')}
                   />
@@ -111,13 +117,12 @@ export default function RegisterPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('auth.password')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
+                  <PasswordInput
                     id="password"
-                    type="password"
-                    placeholder="••••••••"
+                    placeholder={t('auth.passwordPlaceholder')}
                     className="pl-9"
                     {...register('password')}
                   />
@@ -127,13 +132,12 @@ export default function RegisterPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
+                  <PasswordInput
                     id="confirmPassword"
-                    type="password"
-                    placeholder="•••••••••"
+                    placeholder={t('auth.confirmPasswordPlaceholder')}
                     className="pl-9"
                     {...register('confirmPassword')}
                   />
@@ -148,16 +152,16 @@ export default function RegisterPage() {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
+                    {t('auth.creatingAccount')}
                   </>
                 ) : (
-                  'Create Account'
+                  t('auth.signUp')
                 )}
               </Button>
               <p className="text-center text-sm text-muted-foreground">
-                Already have an account?{' '}
+                {t('auth.haveAccount')}{' '}
                 <Link href="/login" className="font-medium text-primary hover:underline">
-                  Sign in
+                  {t('auth.signInLink')}
                 </Link>
               </p>
             </CardFooter>
