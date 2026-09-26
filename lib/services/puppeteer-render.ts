@@ -56,8 +56,33 @@ export async function renderPosterToImage(
       }
     });
 
-    // Brief stabilization delay
-    await new Promise((resolve) => setTimeout(resolve, 600));
+    // Wait for all images to be fully loaded
+    await page.evaluate(async () => {
+      const images = Array.from(document.querySelectorAll('img'));
+      const imagePromises = images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise((resolve, reject) => {
+          img.addEventListener('load', resolve);
+          img.addEventListener('error', resolve); // Continue even if image fails
+          setTimeout(resolve, 5000); // Timeout after 5 seconds
+        });
+      });
+      await Promise.all(imagePromises);
+    });
+
+    // Wait for SVG images to load
+    await page.evaluate(async () => {
+      const svgImages = Array.from(document.querySelectorAll('image'));
+      const svgImagePromises = svgImages.map(img => {
+        return new Promise((resolve) => {
+          setTimeout(resolve, 3000); // Give SVG images time to load
+        });
+      });
+      await Promise.all(svgImagePromises);
+    });
+
+    // Extended stabilization delay for production environment
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Capture screenshot at 1200x1600
     const screenshotBuffer = await page.screenshot({

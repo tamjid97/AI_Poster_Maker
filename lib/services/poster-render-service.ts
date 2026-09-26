@@ -404,13 +404,17 @@ function generateVictoryDayTemplate(poster: Poster): string {
   const insetPhoto2 = photos[2] || 'https://via.placeholder.com/120x120?text=Support';
   const insetPhoto3 = photos[3] || 'https://via.placeholder.com/120x120?text=Support';
 
+  const photoUrls = [mainPhoto, insetPhoto1, insetPhoto2, insetPhoto3].filter(Boolean);
+
   return `
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
     .poster {
@@ -485,12 +489,31 @@ function generateVictoryDayTemplate(poster: Poster): string {
   <div class="poster">
     <div class="headline">${escapeHtml(poster.headline)}</div>
     <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo" crossorigin="anonymous">
     </div>
     <div class="name">${escapeHtml(poster.name)}</div>
     <div class="designation">${escapeHtml(poster.designation || '')}</div>
     <div class="footer">প্রচারে: ${escapeHtml(poster.organization || '')}</div>
   </div>
+  <script>
+    // Preload all images before page is considered ready
+    (function() {
+      const photoUrls = ${JSON.stringify(photoUrls)};
+      const imagePromises = photoUrls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = resolve;
+          img.onerror = resolve; // Continue even if image fails
+          img.src = url;
+          setTimeout(resolve, 5000); // Timeout after 5 seconds
+        });
+      });
+      Promise.all(imagePromises).then(() => {
+        document.body.classList.add('images-loaded');
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }
@@ -501,14 +524,17 @@ function generateVictoryDayTemplate(poster: Poster): string {
 function generateCondolenceTemplate(poster: Poster): string {
   const photos = poster.photo_urls || [];
   const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+  const photoUrls = [mainPhoto].filter(Boolean);
 
   return `
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
     .poster {
@@ -583,12 +609,30 @@ function generateCondolenceTemplate(poster: Poster): string {
   <div class="poster">
     <div class="headline">${escapeHtml(poster.headline)}</div>
     <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo" crossorigin="anonymous">
     </div>
     <div class="name">${escapeHtml(poster.name)}</div>
     <div class="designation">${escapeHtml(poster.designation || '')}</div>
     <div class="footer">স্মরণে: ${escapeHtml(poster.organization || '')}</div>
   </div>
+  <script>
+    (function() {
+      const photoUrls = ${JSON.stringify(photoUrls)};
+      const imagePromises = photoUrls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = url;
+          setTimeout(resolve, 5000);
+        });
+      });
+      Promise.all(imagePromises).then(() => {
+        document.body.classList.add('images-loaded');
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }
@@ -602,11 +646,47 @@ async function generateElectionCampaignTemplate(poster: Poster): Promise<string>
   const secondPhoto = photos[1] || '';
 
   try {
-    // Try to fetch SVG from the templates directory
-    const response = await fetch(new URL('/templates/election-campaign.svg', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').href);
-    if (!response.ok) {
-      throw new Error('Failed to fetch election campaign template');
+    // Try to fetch SVG from the templates directory with timeout and retry
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const templateUrl = new URL('/templates/election-campaign.svg', baseUrl).href;
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    // Retry logic for fetching template
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        response = await fetch(templateUrl, { 
+          signal: controller.signal,
+          headers: {
+            'Accept': 'image/svg+xml',
+          }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          break; // Success, exit retry loop
+        }
+        
+        lastError = new Error(`Template fetch failed with status: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown fetch error');
+        console.warn(`[ELECTION CAMPAIGN TEMPLATE] Fetch attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt)); // Exponential backoff
+        }
+      }
     }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to fetch election campaign template after 3 attempts: ${lastError?.message}`);
+    }
+    
     let svgContent = await response.text();
 
     svgContent = svgContent.replace(
@@ -707,10 +787,46 @@ async function generateEidMubarakTemplate(poster: Poster): Promise<string> {
   const thirdPhoto = photos[2] || '';
 
   try {
-    const response = await fetch(new URL('/templates/eid-mubarak.svg', process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').href);
-    if (!response.ok) {
-      throw new Error('Failed to fetch eid mubarak template');
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const templateUrl = new URL('/templates/eid-mubarak.svg', baseUrl).href;
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    // Retry logic for fetching template
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        response = await fetch(templateUrl, { 
+          signal: controller.signal,
+          headers: {
+            'Accept': 'image/svg+xml',
+          }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          break;
+        }
+        
+        lastError = new Error(`Template fetch failed with status: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown fetch error');
+        console.warn(`[EID MUBARAK TEMPLATE] Fetch attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
     }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to fetch eid mubarak template after 3 attempts: ${lastError?.message}`);
+    }
+    
     let svgContent = await response.text();
 
     // Replace headline
@@ -836,14 +952,17 @@ async function generateEidMubarakTemplate(poster: Poster): Promise<string> {
 function generateEidMubarakHTMLFallback(poster: Poster): string {
   const photos = poster.photo_urls || [];
   const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+  const photoUrls = [mainPhoto].filter(Boolean);
 
   return `
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
     .poster {
@@ -920,7 +1039,7 @@ function generateEidMubarakHTMLFallback(poster: Poster): string {
 <body>
   <div class="poster">
     <div class="hero-photo">
-      <img src="${mainPhoto}" alt="Main Photo" />
+      <img src="${mainPhoto}" alt="Main Photo" crossorigin="anonymous" />
     </div>
     <div class="headline">${escapeHtml(poster.headline)}</div>
     <div class="festive-text">ঈদের শুভেচ্ছা</div>
@@ -929,6 +1048,24 @@ function generateEidMubarakHTMLFallback(poster: Poster): string {
       <div class="banner-text">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
     </div>
   </div>
+  <script>
+    (function() {
+      const photoUrls = ${JSON.stringify(photoUrls)};
+      const imagePromises = photoUrls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = url;
+          setTimeout(resolve, 5000);
+        });
+      });
+      Promise.all(imagePromises).then(() => {
+        document.body.classList.add('images-loaded');
+      });
+    })();
+  </script>
 </body>
 </html>
   `;
@@ -937,14 +1074,17 @@ function generateEidMubarakHTMLFallback(poster: Poster): string {
 function generateElectionCampaignHTMLFallback(poster: Poster): string {
   const photos = poster.photo_urls || [];
   const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+  const photoUrls = [mainPhoto].filter(Boolean);
 
   return `
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&family=Hind+Siliguri:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
     .poster {
@@ -1019,12 +1159,30 @@ function generateElectionCampaignHTMLFallback(poster: Poster): string {
   <div class="poster">
     <div class="headline">${escapeHtml(poster.headline)}</div>
     <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo" crossorigin="anonymous">
     </div>
     <div class="name">${escapeHtml(poster.name)}</div>
     <div class="designation">${escapeHtml([poster.designation, poster.party, poster.organization].filter(Boolean).join(' • ') || '')}</div>
     <div class="footer">প্রচারে: ${escapeHtml(poster.organization || '')}</div>
   </div>
+  <script>
+    (function() {
+      const photoUrls = ${JSON.stringify(photoUrls)};
+      const imagePromises = photoUrls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = url;
+          setTimeout(resolve, 5000);
+        });
+      });
+      Promise.all(imagePromises).then(() => {
+        document.body.classList.add('images-loaded');
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }
@@ -1035,14 +1193,17 @@ function generateElectionCampaignHTMLFallback(poster: Poster): string {
 function generateEidRamadanTemplate(poster: Poster): string {
   const photos = poster.photo_urls || [];
   const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+  const photoUrls = [mainPhoto].filter(Boolean);
 
   return `
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
     .poster {
@@ -1117,12 +1278,30 @@ function generateEidRamadanTemplate(poster: Poster): string {
   <div class="poster">
     <div class="headline">${escapeHtml(poster.headline)}</div>
     <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo" crossorigin="anonymous">
     </div>
     <div class="name">${escapeHtml(poster.name)}</div>
     <div class="designation">${escapeHtml(poster.designation || '')}</div>
     <div class="footer">শুভেচ্ছা: ${escapeHtml(poster.organization || '')}</div>
   </div>
+  <script>
+    (function() {
+      const photoUrls = ${JSON.stringify(photoUrls)};
+      const imagePromises = photoUrls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = url;
+          setTimeout(resolve, 5000);
+        });
+      });
+      Promise.all(imagePromises).then(() => {
+        document.body.classList.add('images-loaded');
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }
@@ -1133,14 +1312,17 @@ function generateEidRamadanTemplate(poster: Poster): string {
 function generateGreetingTemplate(poster: Poster): string {
   const photos = poster.photo_urls || [];
   const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+  const photoUrls = [mainPhoto].filter(Boolean);
 
   return `
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
     .poster {
@@ -1215,12 +1397,30 @@ function generateGreetingTemplate(poster: Poster): string {
   <div class="poster">
     <div class="headline">${escapeHtml(poster.headline)}</div>
     <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo" crossorigin="anonymous">
     </div>
     <div class="name">${escapeHtml(poster.name)}</div>
     <div class="designation">${escapeHtml(poster.designation || '')}</div>
     <div class="footer">শুভেচ্ছা: ${escapeHtml(poster.organization || '')}</div>
   </div>
+  <script>
+    (function() {
+      const photoUrls = ${JSON.stringify(photoUrls)};
+      const imagePromises = photoUrls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = url;
+          setTimeout(resolve, 5000);
+        });
+      });
+      Promise.all(imagePromises).then(() => {
+        document.body.classList.add('images-loaded');
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }
@@ -1234,14 +1434,17 @@ function generateGreetingTemplate(poster: Poster): string {
 function generateFallbackHTML(poster: Poster): string {
   const photos = poster.photo_urls || [];
   const mainPhoto = photos[0] || 'https://via.placeholder.com/500x500?text=Photo';
+  const photoUrls = [mainPhoto].filter(Boolean);
 
   return `
 <!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&display=swap');
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body, html { width: 1200px; height: 1600px; margin: 0; padding: 0; font-family: 'Noto Sans Bengali', sans-serif; overflow: hidden; }
     .poster {
@@ -1317,12 +1520,30 @@ function generateFallbackHTML(poster: Poster): string {
   <div class="poster">
     <div class="headline">${escapeHtml(poster.headline)}</div>
     <div class="hero-photo">
-      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo">
+      <img src="${escapeHtml(mainPhoto)}" alt="Main Photo" crossorigin="anonymous">
     </div>
     <div class="name">${escapeHtml(poster.name)}</div>
     <div class="designation">${escapeHtml(poster.designation || '')}</div>
     <div class="footer">${escapeHtml(poster.organization || poster.party || '')}</div>
   </div>
+  <script>
+    (function() {
+      const photoUrls = ${JSON.stringify(photoUrls)};
+      const imagePromises = photoUrls.map(url => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = url;
+          setTimeout(resolve, 5000);
+        });
+      });
+      Promise.all(imagePromises).then(() => {
+        document.body.classList.add('images-loaded');
+      });
+    })();
+  </script>
 </body>
 </html>`;
 }
@@ -1337,10 +1558,45 @@ async function generateLeadershipPosterTemplate(poster: Poster): Promise<string>
 
   try {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const response = await fetch(new URL('/templates/svg/leadership-poster.svg', baseUrl).href);
-    if (!response.ok) {
-      throw new Error('Failed to fetch leadership poster template');
+    const templateUrl = new URL('/templates/svg/leadership-poster.svg', baseUrl).href;
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    // Retry logic for fetching template
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        response = await fetch(templateUrl, { 
+          signal: controller.signal,
+          headers: {
+            'Accept': 'image/svg+xml',
+          }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          break;
+        }
+        
+        lastError = new Error(`Template fetch failed with status: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown fetch error');
+        console.warn(`[LEADERSHIP POSTER TEMPLATE] Fetch attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
     }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to fetch leadership poster template after 3 attempts: ${lastError?.message}`);
+    }
+    
     let svgContent = await response.text();
 
     // Replace headline text (the 3-line headline on the right side)
@@ -1463,11 +1719,46 @@ async function generateEidMubarakV2Template(poster: Poster): Promise<string> {
   const leaderPhoto3 = photos[3] || '';
 
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3004';
-    const response = await fetch(new URL('/templates/svg/eid-mobarak-v2.svg', baseUrl).href);
-    if (!response.ok) {
-      throw new Error('Failed to fetch eid mubarak v2 template');
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const templateUrl = new URL('/templates/svg/eid-mobarak-v2.svg', baseUrl).href;
+    
+    let response: Response | null = null;
+    let lastError: Error | null = null;
+    
+    // Retry logic for fetching template
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
+        response = await fetch(templateUrl, { 
+          signal: controller.signal,
+          headers: {
+            'Accept': 'image/svg+xml',
+          }
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          break;
+        }
+        
+        lastError = new Error(`Template fetch failed with status: ${response.status}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown fetch error');
+        console.warn(`[EID MUBARAK V2 TEMPLATE] Fetch attempt ${attempt} failed:`, lastError.message);
+        
+        if (attempt < 3) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+        }
+      }
     }
+    
+    if (!response || !response.ok) {
+      throw new Error(`Failed to fetch eid mubarak v2 template after 3 attempts: ${lastError?.message}`);
+    }
+    
     let svgContent = await response.text();
 
     // Replace headline - only if user provided custom headline, otherwise keep default
