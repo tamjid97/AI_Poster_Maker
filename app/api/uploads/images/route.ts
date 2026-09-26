@@ -41,6 +41,8 @@ export async function POST(request: NextRequest) {
 
     const uploadedUrls: string[] = [];
 
+    console.log('[UPLOAD] Processing', files.length, 'files');
+
     for (const file of files) {
       if (!(file instanceof File)) {
         continue;
@@ -65,14 +67,18 @@ export async function POST(request: NextRequest) {
         const fileName = `poster-${Date.now()}-${Math.random().toString(36).substring(7)}`;
         const result = await uploadImageToCloudinary(buffer, fileName, 'posters/uploads');
         uploadedUrls.push(result.secure_url);
+        console.log('[UPLOAD] Uploaded to Cloudinary:', result.secure_url);
       } else {
         // Fallback: convert to base64 data URL for local use
         const buffer = Buffer.from(await file.arrayBuffer());
         const base64 = buffer.toString('base64');
         const dataUrl = `data:${file.type};base64,${base64}`;
         uploadedUrls.push(dataUrl);
+        console.log('[UPLOAD] Converted to base64 data URL, length:', dataUrl.length);
       }
     }
+
+    console.log('[UPLOAD] Final uploaded URLs:', uploadedUrls);
 
     return NextResponse.json<ApiResponse<{ urls: string[] }>>(
       {

@@ -65,7 +65,14 @@ function StatusBadge({ status }: { status: PosterStatus }) {
     COMPLETED: 'bg-success/20 text-success',
     FAILED: 'bg-destructive/20 text-destructive',
   };
-  return <Badge variant="secondary" className={styles[status]}>{STATUS_LABELS[status]}</Badge>;
+  const known = status && Object.prototype.hasOwnProperty.call(STATUS_LABELS, status);
+  const label = known ? STATUS_LABELS[status] : 'Unknown';
+  const styleKey: PosterStatus = known ? status : 'DRAFT';
+  return (
+    <Badge variant="secondary" className={styles[styleKey] ?? styles.DRAFT}>
+      {label}
+    </Badge>
+  );
 }
 
 function PosterPreviewContent() {
@@ -190,6 +197,32 @@ function PosterPreviewContent() {
     }
     setLoading(false);
   };
+
+  // [OBSERVABILITY NFR-1] Log typeof + raw-value for every critical metadata
+  // field whenever the poster object resolves (from localStorage, API create
+  // response, or GET /:id fetch). Always emits even on success so future audits
+  // can immediately spot field-name / type / nullability mismatches.
+  useEffect(() => {
+    if (!poster) return;
+    const fields = [
+      { key: 'status', val: (poster as any).status },
+      { key: 'created_at', val: (poster as any).created_at },
+      { key: 'regenerate_count', val: (poster as any).regenerate_count },
+      { key: 'occasion', val: (poster as any).occasion },
+      { key: 'name', val: (poster as any).name },
+    ];
+    console.groupCollapsed('[POSTER PREVIEW OBSERVABILITY] metadata audit  id=%s', poster.id);
+    for (const f of fields) {
+      console.log(
+        '  %-18s type=%-10s truthy=%s  raw=%o',
+        f.key,
+        typeof f.val,
+        Boolean(f.val),
+        f.val
+      );
+    }
+    console.groupEnd();
+  }, [poster]);
 
   useEffect(() => {
     loadPoster();
@@ -318,7 +351,10 @@ function PosterPreviewContent() {
     );
   }
 
-  const remainingRegens = MAX_REGENERATE_COUNT - poster.regenerate_count;
+  const rawRegenCount = Number.isFinite(Number(poster.regenerate_count))
+    ? Math.max(0, Math.floor(Number(poster.regenerate_count)))
+    : 0;
+  const remainingRegens = Math.max(0, MAX_REGENERATE_COUNT - rawRegenCount);
 
   return (
     <div className="min-h-screen bg-background">
@@ -403,17 +439,20 @@ function PosterPreviewContent() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Created</span>
                     <span className="text-sm font-medium">
-                      {poster.created_at
-                        ? new Date(poster.created_at).toLocaleDateString('en-US', {
-                            year: 'numeric', month: 'short', day: 'numeric',
-                          })
-                        : 'N/A'}
+                      {(() => {
+                        if (!poster.created_at) return '—';
+                        const d = new Date(poster.created_at);
+                        if (isNaN(d.getTime())) return '—';
+                        return d.toLocaleDateString('en-US', {
+                          year: 'numeric', month: 'short', day: 'numeric',
+                        });
+                      })()}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-muted-foreground">Regenerations</span>
                     <span className="text-sm font-medium">
-                      {poster.regenerate_count}/{MAX_REGENERATE_COUNT}
+                      {rawRegenCount}/{MAX_REGENERATE_COUNT}
                     </span>
                   </div>
                 </CardContent>

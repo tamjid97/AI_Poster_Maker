@@ -324,41 +324,74 @@ function escapeHtml(text: string | undefined | null): string {
 
 /**
  * Resolve which template to use for rendering.
+ * Priority order (consistent with API routes):
+ *   1) layout_suggestion.templateId   <- built-in `tpl-*` IDs ALWAYS live here
+ *   2) poster.template_id (UUID or legacy)
+ *   3) occasion_type match against HARDCODED_TEMPLATES
+ *   4) warn + HARDCODED_TEMPLATES[0] fallback
  */
 export function resolveTemplate(poster: Poster, template?: Template | null): Template {
   if (template) return template;
 
-  const targetId =
-    poster.template_id ||
-    (poster.layout_suggestion as any)?.templateId ||
-    null;
+  const layoutTemplateId = (poster.layout_suggestion as any)?.templateId as string | null;
+  const storedTemplateId = poster.template_id;
+  const posterOccasion = poster.occasion;
 
-  if (targetId) {
-    // Handle legacy template ID mapping
-    const idMapping: Record<string, string> = {
-      'tpl-election-campaign': 'tpl-election-campaign',
-      'election-campaign': 'tpl-election-campaign',
-      'tpl-victory-day': 'tpl-victory-day', // Fallback
-    };
+  let resolved: Template | null = null;
+  let resolutionPath = 'stepD';
 
-    const mappedId = idMapping[targetId] || targetId;
-    const exactMatch = HARDCODED_TEMPLATES.find((t) => t.id === mappedId);
-    if (exactMatch) return exactMatch;
-
-    const partialMatch = HARDCODED_TEMPLATES.find(
-      (t) => t.id.includes(mappedId) || mappedId.includes(t.id)
-    );
-    if (partialMatch) return partialMatch;
-
-    const occasionFromId = mappedId.replace('tpl-', '').replace(/-/g, '_');
-    const occasionMatch = HARDCODED_TEMPLATES.find((t) => t.occasion_type === occasionFromId);
-    if (occasionMatch) return occasionMatch;
+  // Step A: layout_suggestion.templateId first (built-in tpl-* IDs always stored here)
+  if (!resolved && layoutTemplateId) {
+    const exact = HARDCODED_TEMPLATES.find((t) => t.id === layoutTemplateId);
+    if (exact) { resolved = exact; resolutionPath = 'stepA-layout_suggestion.templateId-exact'; }
+    else {
+      const partial = HARDCODED_TEMPLATES.find(
+        (t) => t.id.includes(layoutTemplateId) || layoutTemplateId.includes(t.id)
+      );
+      if (partial) { resolved = partial; resolutionPath = 'stepA-layout_suggestion.templateId-partial'; }
+    }
   }
 
-  const matched = HARDCODED_TEMPLATES.find((t) => t.occasion_type === poster.occasion);
-  if (matched) return matched;
+  // Step B: poster.template_id (UUID path or direct built-in ID)
+  if (!resolved && storedTemplateId) {
+    const exact = HARDCODED_TEMPLATES.find((t) => t.id === storedTemplateId);
+    if (exact) { resolved = exact; resolutionPath = 'stepB-template_id-exact'; }
+    else {
+      const partial = HARDCODED_TEMPLATES.find(
+        (t) => t.id.includes(storedTemplateId) || storedTemplateId.includes(t.id)
+      );
+      if (partial) { resolved = partial; resolutionPath = 'stepB-template_id-partial'; }
+      else {
+        // Legacy mapping fallback
+        const idMapping: Record<string, string> = {
+          'election-campaign': 'tpl-election-campaign',
+        };
+        const mapped = idMapping[storedTemplateId];
+        if (mapped) {
+          const viaMap = HARDCODED_TEMPLATES.find((t) => t.id === mapped);
+          if (viaMap) { resolved = viaMap; resolutionPath = 'stepB-template_id-legacyMap'; }
+        }
+      }
+    }
+  }
 
-  return HARDCODED_TEMPLATES[0];
+  // Step C: occasion match
+  if (!resolved && posterOccasion) {
+    const byOccasion = HARDCODED_TEMPLATES.find((t) => t.occasion_type === posterOccasion);
+    if (byOccasion) { resolved = byOccasion; resolutionPath = 'stepC-occasion-match'; }
+  }
+
+  // Step D: last-resort fallback with warning
+  if (!resolved) {
+    resolved = HARDCODED_TEMPLATES[0];
+    console.warn('[resolveTemplate stepD-FALLBACK] using first template posterId=%s layoutTemplateId=%o storedTemplateId=%o occasion=%o',
+      poster.id, layoutTemplateId, storedTemplateId, posterOccasion);
+    resolutionPath = 'stepD-firstTemplateFallback';
+  } else {
+    console.log('[resolveTemplate] posterId=%s winner=%s path=%s', poster.id, resolved.id, resolutionPath);
+  }
+
+  return resolved;
 }
 
 /**

@@ -190,6 +190,45 @@ export const DEFAULT_TEMPLATES: Template[] = [
     created_at: new Date().toISOString(),
   },
   {
+    id: 'tpl-eid-mubarak',
+    title: 'ঈদ মোবারক — Eid Mubarak Premium Poster',
+    occasion_type: 'eid_mubarak',
+    thumbnail_url: '/templates/eid-mubarak.svg',
+    layout_config: {
+      background: {
+        gradient: ['#FFFDF5', '#FFF9E9', '#F7EFD7'],
+        texture: 'subtle-pattern',
+        decorations: ['gold-ray', 'mosque-decoration', 'dome', 'minaret']
+      },
+      photoSlots: [
+        { shape: 'organic', position: { x: '67%', y: '47%' }, size: '48%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '9%', y: '9%' }, size: '9%', border: 'gold', glow: true },
+        { shape: 'circle', position: { x: '19%', y: '9%' }, size: '9%', border: 'gold', glow: true }
+      ],
+      textSlots: [
+        { field: 'headline', font: 'Hind Siliguri', size: 78, color: '#07583F', effect: 'none', position: { x: '10%', y: '40%' } },
+        { field: 'name', font: 'Hind Siliguri', size: 68, color: '#07583F', effect: 'none', position: { x: '8%', y: '83%' } },
+        { field: 'designation', font: 'Hind Siliguri', size: 45, color: '#FFFFFF', effect: 'none', position: { x: '50%', y: '96%' } }
+      ],
+      namePlate: {
+        style: 'banner',
+        gradient: ['#07563E', '#063E2F', '#042C22'],
+        textColor: '#FFFFFF'
+      },
+      footer: {
+        style: 'gradient-bar',
+        text: 'ঈদ মোবারক'
+      },
+      colorScheme: {
+        primary: '#08734F',
+        secondary: '#F0A52B',
+        accent: '#C99930'
+      }
+    },
+    is_active: true,
+    created_at: new Date().toISOString(),
+  },
+  {
     id: 'tpl-eid-mobarak-v2',
     title: 'ঈদ মোবারক — লিডার ফটো (Eid Mubarak with Leader Photos)',
     occasion_type: 'eid_mubarak',

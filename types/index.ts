@@ -85,6 +85,7 @@ export interface LayoutSuggestion {
   visualStyle: string;
   composition: string;
   backgroundDecoration: string;
+  templateId?: string;
 }
 
 export interface AuthUser {
