@@ -187,7 +187,7 @@ const HARDCODED_TEMPLATES: Template[] = [
         accent: '#ffd700'
       }
     },
-    is_active: true,
+    is_active: false, // Disabled - blank thumbnail due to minimal design
     created_at: new Date().toISOString(),
   },
   {
@@ -226,7 +226,7 @@ const HARDCODED_TEMPLATES: Template[] = [
         accent: '#C99930'
       }
     },
-    is_active: true,
+    is_active: false, // Disabled - blank thumbnail due to minimal design
     created_at: new Date().toISOString(),
   },
   {
@@ -266,7 +266,7 @@ const HARDCODED_TEMPLATES: Template[] = [
         accent: '#d99a24'
       }
     },
-    is_active: true,
+    is_active: false, // Disabled - blank thumbnail due to minimal design
     created_at: new Date().toISOString(),
   },
   {
@@ -327,8 +327,8 @@ function escapeHtml(text: string | undefined | null): string {
  * Priority order (consistent with API routes):
  *   1) layout_suggestion.templateId   <- built-in `tpl-*` IDs ALWAYS live here
  *   2) poster.template_id (UUID or legacy)
- *   3) occasion_type match against HARDCODED_TEMPLATES
- *   4) warn + HARDCODED_TEMPLATES[0] fallback
+ *   3) occasion_type match against HARDCODED_TEMPLATES (only active templates)
+ *   4) warn + HARDCODED_TEMPLATES[0] fallback (only active templates)
  */
 export function resolveTemplate(poster: Poster, template?: Template | null): Template {
   if (template) return template;
@@ -337,15 +337,18 @@ export function resolveTemplate(poster: Poster, template?: Template | null): Tem
   const storedTemplateId = poster.template_id;
   const posterOccasion = poster.occasion;
 
+  // Filter to only active templates
+  const ACTIVE_TEMPLATES = HARDCODED_TEMPLATES.filter(t => t.is_active !== false);
+
   let resolved: Template | null = null;
   let resolutionPath = 'stepD';
 
   // Step A: layout_suggestion.templateId first (built-in tpl-* IDs always stored here)
   if (!resolved && layoutTemplateId) {
-    const exact = HARDCODED_TEMPLATES.find((t) => t.id === layoutTemplateId);
+    const exact = ACTIVE_TEMPLATES.find((t) => t.id === layoutTemplateId);
     if (exact) { resolved = exact; resolutionPath = 'stepA-layout_suggestion.templateId-exact'; }
     else {
-      const partial = HARDCODED_TEMPLATES.find(
+      const partial = ACTIVE_TEMPLATES.find(
         (t) => t.id.includes(layoutTemplateId) || layoutTemplateId.includes(t.id)
       );
       if (partial) { resolved = partial; resolutionPath = 'stepA-layout_suggestion.templateId-partial'; }
@@ -354,10 +357,10 @@ export function resolveTemplate(poster: Poster, template?: Template | null): Tem
 
   // Step B: poster.template_id (UUID path or direct built-in ID)
   if (!resolved && storedTemplateId) {
-    const exact = HARDCODED_TEMPLATES.find((t) => t.id === storedTemplateId);
+    const exact = ACTIVE_TEMPLATES.find((t) => t.id === storedTemplateId);
     if (exact) { resolved = exact; resolutionPath = 'stepB-template_id-exact'; }
     else {
-      const partial = HARDCODED_TEMPLATES.find(
+      const partial = ACTIVE_TEMPLATES.find(
         (t) => t.id.includes(storedTemplateId) || storedTemplateId.includes(t.id)
       );
       if (partial) { resolved = partial; resolutionPath = 'stepB-template_id-partial'; }
@@ -368,23 +371,23 @@ export function resolveTemplate(poster: Poster, template?: Template | null): Tem
         };
         const mapped = idMapping[storedTemplateId];
         if (mapped) {
-          const viaMap = HARDCODED_TEMPLATES.find((t) => t.id === mapped);
+          const viaMap = ACTIVE_TEMPLATES.find((t) => t.id === mapped);
           if (viaMap) { resolved = viaMap; resolutionPath = 'stepB-template_id-legacyMap'; }
         }
       }
     }
   }
 
-  // Step C: occasion match
+  // Step C: occasion match (only active templates)
   if (!resolved && posterOccasion) {
-    const byOccasion = HARDCODED_TEMPLATES.find((t) => t.occasion_type === posterOccasion);
+    const byOccasion = ACTIVE_TEMPLATES.find((t) => t.occasion_type === posterOccasion);
     if (byOccasion) { resolved = byOccasion; resolutionPath = 'stepC-occasion-match'; }
   }
 
-  // Step D: last-resort fallback with warning
+  // Step D: last-resort fallback with warning (only active templates)
   if (!resolved) {
-    resolved = HARDCODED_TEMPLATES[0];
-    console.warn('[resolveTemplate stepD-FALLBACK] using first template posterId=%s layoutTemplateId=%o storedTemplateId=%o occasion=%o',
+    resolved = ACTIVE_TEMPLATES[0];
+    console.warn('[resolveTemplate stepD-FALLBACK] using first active template posterId=%s layoutTemplateId=%o storedTemplateId=%o occasion=%o',
       poster.id, layoutTemplateId, storedTemplateId, posterOccasion);
     resolutionPath = 'stepD-firstTemplateFallback';
   } else {

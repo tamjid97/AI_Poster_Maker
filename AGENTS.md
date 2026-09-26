@@ -1,4 +1,4 @@
-# AI Poster Maker - Production Layout Fixes
+# AI Poster Maker - Production Layout Fixes & Template Updates
 
 ## Issues Fixed
 
@@ -45,6 +45,24 @@
 - Added 'Hind Siliguri' to Google Fonts imports in fallback templates
 - Ensured all font imports use proper preconnect headers
 
+## New Template Added
+
+### Victory Day SVG Template
+**Added**: New detailed Victory Day SVG template with modern design elements
+
+**Features**:
+- Detailed SVG design with red sun, bird silhouettes, monument silhouettes
+- Single photo slot with cyan ring design
+- Blue wave decorations at bottom
+- Contact information section
+- Proper Hind Siliguri font support
+- Fallback to HTML template if SVG fails
+
+**Files Modified**:
+- `public/templates/victory-day.svg` - Replaced with new detailed SVG
+- `lib/services/poster-render-service.ts` - Added `generateVictoryDaySVGTemplate` function
+- `lib/default-templates.ts` - Updated Victory Day template configuration
+
 ## Files Modified
 
 1. **lib/services/puppeteer-render.ts**
@@ -60,6 +78,13 @@
      - Client-side image preloading scripts
      - CORS attributes for images
      - Font family imports for 'Hind Siliguri'
+   - Added new Victory Day SVG template function
+
+3. **lib/default-templates.ts**
+   - Updated Victory Day template configuration for new SVG design
+
+4. **public/templates/victory-day.svg**
+   - Replaced simple template with detailed SVG design
 
 ## Testing Recommendations
 
@@ -68,6 +93,7 @@
 3. **Test network conditions**: Test with slow network connections to verify retry logic works
 4. **Test environment variables**: Verify `NEXT_PUBLIC_APP_URL` is set correctly in Vercel
 5. **Test SVG templates**: Try all template types to ensure they fetch and render correctly
+6. **Test new Victory Day template**: Create a Victory Day poster and verify the new SVG design renders properly
 
 ## Environment Variables Required
 
@@ -84,3 +110,4 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 - Increased rendering time by ~1-2 seconds due to proper loading waits
 - Added reliability improvements that prevent layout failures
 - Retry logic adds minimal overhead but significantly improves success rate
+- New Victory Day SVG template may add slight rendering time due to complex design elements
