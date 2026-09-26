@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="1600" viewBox="0 0 1200 1600" version="1.1">
+  <defs>
+    <!-- Dynamic Campaign Gradient -->
+    <linearGradient id="bg-grad-v3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#022B18"/>
+      <stop offset="50%" stop-color="#06482B"/>
+      <stop offset="100%" stop-color="#3B080C"/>
+    </linearGradient>
+
+    <!-- Bright Gold Gradient -->
+    <linearGradient id="bright-gold-v3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF8B3"/>
+      <stop offset="30%" stop-color="#F2C238"/>
+      <stop offset="70%" stop-color="#B8820B"/>
+      <stop offset="100%" stop-color="#FCE885"/>
+    </linearGradient>
+
+    <!-- Bold Red Ribbon -->
+    <linearGradient id="bold-red-v3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8F0B1E"/>
+      <stop offset="50%" stop-color="#D61834"/>
+      <stop offset="100%" stop-color="#730514"/>
+    </linearGradient>
+
+    <filter id="shadow-v3" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="0" dy="8" result="offsetblur"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <clipPath id="photo-clip-main-v3">
+      <circle cx="600" cy="650" r="280"/>
+    </clipPath>
+
+    <clipPath id="photo-clip-2-v3">
+      <circle cx="180" cy="1350" r="95"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="1600" fill="url(#bg-grad-v3)"/>
+  
+  <!-- Outer Decorative Border with Corner Badges -->
+  <rect x="35" y="35" width="1130" height="1530" rx="10" fill="none" stroke="url(#bright-gold-v3)" stroke-width="4"/>
+  <rect x="47" y="47" width="1106" height="1506" rx="6" fill="none" stroke="#D61834" stroke-width="2"/>
+
+  <!-- Top Slogan -->
+  <text id="top-label" x="600" y="135" text-anchor="middle" fill="#FFF8B3" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="30" font-weight="700" letter-spacing="3">
+    জনগণের দোয়া ও সমর্থন প্রার্থী
+  </text>
+
+  <!-- Party Symbol Badge Placeholder (Top Right) -->
+  <g transform="translate(1000, 80)">
+    <circle cx="50" cy="50" r="42" fill="#022B18" stroke="url(#bright-gold-v3)" stroke-width="3"/>
+    <text x="50" y="56" text-anchor="middle" fill="#F2C238" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="18" font-weight="700">প্রতীক</text>
+  </g>
+
+  <!-- Main Campaign Headline -->
+  <g filter="url(#shadow-v3)">
+    <path d="M 110 205 L 1090 205 L 1125 270 L 1090 335 L 110 335 L 75 270 Z" fill="url(#bold-red-v3)" stroke="url(#bright-gold-v3)" stroke-width="4"/>
+    <text id="headline-text" x="600" y="292" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="68" font-weight="800">
+      নির্বাচনী প্রচার ও ভোট প্রার্থনা
+    </text>
+  </g>
+
+  <!-- Main Candidate Photo Frame -->
+  <circle cx="600" cy="650" r="312" fill="none" stroke="#B8820B" stroke-width="8"/>
+  <circle cx="600" cy="650" r="298" fill="none" stroke="url(#bright-gold-v3)" stroke-width="12"/>
+
+  <g clip-path="url(#photo-clip-main-v3)">
+    <circle id="photo-slot-main" cx="600" cy="650" r="280" fill="#D8D8D8"/>
+    <circle cx="600" cy="585" r="70" fill="#888888"/>
+    <path d="M 440 820 C 450 700 510 660 600 660 C 690 660 750 700 760 820 Z" fill="#888888"/>
+    <text id="photo-placeholder-label" x="600" y="890" text-anchor="middle" fill="#444444" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24" font-weight="600">
+      প্রার্থীর ছবি
+    </text>
+  </g>
+
+  <!-- Candidate Name Banner -->
+  <g filter="url(#shadow-v3)">
+    <path d="M 130 945 L 1070 945 L 1105 1005 L 1070 1065 L 130 1065 L 95 1005 Z" fill="#044227" stroke="url(#bright-gold-v3)" stroke-width="4"/>
+    <text id="name-text" x="600" y="1025" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="74" font-weight="800">
+      প্রার্থীর নাম
+    </text>
+  </g>
+
+  <!-- Designation -->
+  <text id="designation-text" x="600" y="1115" text-anchor="middle" fill="#FFF8B3" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="40" font-weight="600">
+    পদবী / পদের নাম
+  </text>
+
+  <path d="M 250 1155 H 500 M 700 1155 H 950" stroke="url(#bright-gold-v3)" stroke-width="3"/>
+  <polygon points="600,1142 613,1155 600,1168 587,1155" fill="#F2C238"/>
+
+  <!-- Area / District Badge -->
+  <rect id="district-party-bg" x="260" y="1185" width="680" height="85" rx="42" fill="#022B18" stroke="url(#bright-gold-v3)" stroke-width="3"/>
+  <text id="district-text" x="600" y="1240" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="36" font-weight="600">
+    ইউনিয়ন / থানা / জেলা
+  </text>
+
+  <!-- Secondary Photo Slot (Lower Left) -->
+  <circle cx="180" cy="1350" r="108" fill="#022B18" stroke="url(#bright-gold-v3)" stroke-width="6"/>
+  <g clip-path="url(#photo-clip-2-v3)">
+    <circle id="photo-slot-2" cx="180" cy="1350" r="95" fill="#C4C4C4"/>
+    <circle cx="180" cy="1325" r="25" fill="#777777"/>
+    <path d="M 135 1410 C 138 1370 155 1355 180 1355 C 205 1355 222 1370 225 1410 Z" fill="#777777"/>
+  </g>
+  <text id="photo-2-label" x="180" y="1475" text-anchor="middle" fill="#F2C238" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="22" font-weight="600">
+    নেতৃবৃন্দ
+  </text>
+
+  <!-- Manifesto / Info Card -->
+  <rect x="340" y="1300" width="720" height="165" rx="20" fill="#053820" stroke="url(#bright-gold-v3)" stroke-width="2"/>
+  <text id="information-heading" x="700" y="1348" text-anchor="middle" fill="#F2C238" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="28" font-weight="700">
+    নির্বাচনী অঙ্গীকার
+  </text>
+  <text id="information-line-1" x="700" y="1392" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="28" font-weight="500">
+    সংক্ষিপ্ত বক্তব্য / স্লোগান
+  </text>
+  <text id="information-line-2" x="700" y="1432" text-anchor="middle" fill="#C2E0D2" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="22">
+    বিকাশ ও উন্নয়নের ধারা অব্যাহত রাখতে ভোট দিন
+  </text>
+
+  <!-- Footer Swoosh -->
+  <path d="M 0 1510 C 400 1460 800 1560 1200 1480 L 1200 1600 L 0 1600 Z" fill="#01170D"/>
+  <path d="M 0 1510 C 400 1460 800 1560 1200 1480" fill="none" stroke="url(#bright-gold-v3)" stroke-width="4"/>
+  <text id="footer-text" x="600" y="1565" text-anchor="middle" fill="#F2C238" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24" font-weight="600">
+    প্রচারে: এলাকার সর্বস্তরের জনগণ / আপনার বার্তা
+  </text>
+</svg>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="1600" viewBox="0 0 1200 1600" version="1.1">
+  <defs>
+    <!-- Rich Festive Teal/Green Gradient -->
+    <linearGradient id="bg-grad-v4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#012419"/>
+      <stop offset="50%" stop-color="#044833"/>
+      <stop offset="100%" stop-color="#1A0D26"/>
+    </linearGradient>
+
+    <!-- Royal Festive Gold Gradient -->
+    <linearGradient id="festive-gold-v4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFEAA7"/>
+      <stop offset="35%" stop-color="#EBB634"/>
+      <stop offset="70%" stop-color="#9E7313"/>
+      <stop offset="100%" stop-color="#F7D060"/>
+    </linearGradient>
+
+    <!-- Festive Magenta/Red Accent -->
+    <linearGradient id="festive-red-v4" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#70092B"/>
+      <stop offset="50%" stop-color="#B31248"/>
+      <stop offset="100%" stop-color="#54041E"/>
+    </linearGradient>
+
+    <filter id="shadow-v4" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="10"/>
+      <feOffset dx="0" dy="8" result="offsetblur"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.4"/></feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <clipPath id="photo-clip-main-v4">
+      <circle cx="600" cy="650" r="280"/>
+    </clipPath>
+
+    <clipPath id="photo-clip-2-v4">
+      <circle cx="180" cy="1350" r="95"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect x="0" y="0" width="1200" height="1600" fill="url(#bg-grad-v4)"/>
+  
+  <!-- Outer Festive Pattern Border -->
+  <rect x="35" y="35" width="1130" height="1530" rx="12" fill="none" stroke="url(#festive-gold-v4)" stroke-width="3.5"/>
+  <rect x="47" y="47" width="1106" height="1506" rx="8" fill="none" stroke="#B31248" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Crescent Moon Motif (Top Center Background) -->
+  <g transform="translate(600, 110)" opacity="0.3">
+    <path d="M -20 -40 A 45 45 0 1 0 35 35 A 35 35 0 1 1 -20 -40 Z" fill="url(#festive-gold-v4)"/>
+    <polygon points="25,-15 28,-5 38,-5 30,2 33,12 25,6 17,12 20,2 12,-5 22,-5" fill="#FFEAA7"/>
+  </g>
+
+  <!-- Top Label -->
+  <text id="top-label" x="600" y="140" text-anchor="middle" fill="#FFEAA7" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="28" font-weight="700" letter-spacing="3">
+    পবিত্র ঈদুল ফিতরের শুভেচ্ছা
+  </text>
+
+  <!-- Main Headline Ribbon -->
+  <g filter="url(#shadow-v4)">
+    <path d="M 120 210 L 1080 210 L 1115 275 L 1080 340 L 120 340 L 85 275 Z" fill="url(#festive-red-v4)" stroke="url(#festive-gold-v4)" stroke-width="4"/>
+    <text id="headline-text" x="600" y="298" text-anchor="middle" fill="#FFEAA7" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="74" font-weight="800">
+      ঈদ মোবারক
+    </text>
+  </g>
+
+  <!-- Central Photo Slot & Mandala Ring -->
+  <circle cx="600" cy="650" r="310" fill="none" stroke="#9E7313" stroke-width="6" stroke-dasharray="8 12"/>
+  <circle cx="600" cy="650" r="298" fill="none" stroke="url(#festive-gold-v4)" stroke-width="10"/>
+
+  <g clip-path="url(#photo-clip-main-v4)">
+    <circle id="photo-slot-main" cx="600" cy="650" r="280" fill="#D8D8D8"/>
+    <circle cx="600" cy="585" r="70" fill="#888888"/>
+    <path d="M 440 820 C 450 700 510 660 600 660 C 690 660 750 700 760 820 Z" fill="#888888"/>
+    <text id="photo-placeholder-label" x="600" y="890" text-anchor="middle" fill="#555555" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24" font-weight="600">
+      ছবি সংযুক্ত করুন
+    </text>
+  </g>
+
+  <!-- Candidate Name Banner -->
+  <g filter="url(#shadow-v4)">
+    <path d="M 140 950 L 1060 950 L 1095 1005 L 1060 1060 L 140 1060 L 105 1005 Z" fill="#033B2A" stroke="url(#festive-gold-v4)" stroke-width="4"/>
+    <text id="name-text" x="600" y="1025" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="72" font-weight="800">
+      নামের স্থান
+    </text>
+  </g>
+
+  <!-- Designation -->
+  <text id="designation-text" x="600" y="1115" text-anchor="middle" fill="#FFEAA7" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="38" font-weight="600">
+    পদবী / সংগঠনের নাম
+  </text>
+
+  <path d="M 280 1155 H 520 M 680 1155 H 920" stroke="url(#festive-gold-v4)" stroke-width="2.5"/>
+  <circle cx="600" cy="1155" r="7" fill="#EBB634"/>
+
+  <!-- District Badge -->
+  <rect id="district-party-bg" x="280" y="1185" width="640" height="80" rx="40" fill="#012419" stroke="url(#festive-gold-v4)" stroke-width="2"/>
+  <text id="district-text" x="600" y="1238" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="34" font-weight="600">
+    জেলা / এলাকার নাম
+  </text>
+
+  <!-- Secondary Photo Slot (Lower Left) -->
+  <circle cx="180" cy="1350" r="108" fill="#012419" stroke="url(#festive-gold-v4)" stroke-width="6"/>
+  <g clip-path="url(#photo-clip-2-v4)">
+    <circle id="photo-slot-2" cx="180" cy="1350" r="95" fill="#C8C8C8"/>
+    <circle cx="180" cy="1325" r="25" fill="#888888"/>
+    <path d="M 135 1410 C 138 1370 155 1355 180 1355 C 205 1355 222 1370 225 1410 Z" fill="#888888"/>
+  </g>
+  <text id="photo-2-label" x="180" y="1475" text-anchor="middle" fill="#EBB634" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="22" font-weight="600">
+    সহযোদ্ধা
+  </text>
+
+  <!-- Greeting Card Panel -->
+  <rect x="340" y="1300" width="720" height="160" rx="18" fill="#023323" stroke="url(#festive-gold-v4)" stroke-width="2"/>
+  <text id="information-heading" x="700" y="1348" text-anchor="middle" fill="#EBB634" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="26" font-weight="700">
+    শুভেচ্ছা বার্তা
+  </text>
+  <text id="information-line-1" x="700" y="1392" text-anchor="middle" fill="#FFFFFF" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="28" font-weight="500">
+    আপনার ও আপনার পরিবারের জন্য আনন্দময় ঈদ
+  </text>
+  <text id="information-line-2" x="700" y="1432" text-anchor="middle" fill="#A7D4C5" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="22">
+    সকলকে জানাই আন্তরিক প্রীতি ও শুভেচ্ছা
+  </text>
+
+  <!-- Bottom Wave Footer -->
+  <path d="M 0 1520 C 300 1470 600 1560 1200 1490 L 1200 1600 L 0 1600 Z" fill="#011710"/>
+  <path d="M 0 1520 C 300 1470 600 1560 1200 1490" fill="none" stroke="url(#festive-gold-v4)" stroke-width="4"/>
+  <text id="footer-text" x="600" y="1565" text-anchor="middle" fill="#EBB634" font-family="Hind Siliguri, Noto Sans Bengali, sans-serif" font-size="24" font-weight="600">
+    শুভেচ্ছান্তে: আপনার বার্তা এখানে
+  </text>
+</svg>
